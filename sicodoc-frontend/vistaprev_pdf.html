@@ -6,6 +6,7 @@
     <title>SICODOC - Visor PDF</title>
         <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <link rel="stylesheet" href="/sicodoc-frontend/css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <link rel="icon" type="image/x-icon" href="/sicodoc-frontend/assets/favicon/favicon.ico">
@@ -124,6 +125,58 @@ main {
     background-image: none; /* Quitamos la imagen de fondo de main */
     background-color: #e6e6e6; /* Color de fondo para esta página */
 }
+
+/* Notificación de Descarga */
+.download-notification {
+    position: fixed; /* Fija la notificación en la parte superior de la ventana */
+    top: -100px;     /* Empieza oculta fuera de la pantalla */
+    left: 0;
+    width: 100%;
+    background-color: #274c8c; /* El color de tu barra de subtítulo */
+    color: white;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra el contenido */
+    font-size: 1.1em;
+    font-family: 'Abel', sans-serif; /* La fuente que usas */
+    z-index: 1000;
+    transition: top 0.5s ease-in-out; /* Esta es tu animación "lenta" */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Clase que se añade con JS para mostrar la barra */
+.download-notification.show {
+    top: 0; /* La barra baja a la posición 0 */
+}
+
+/* Icono de Check */
+.notification-icon {
+    font-size: 1.5em;
+    margin-right: 15px;
+    color: #4CAF50; /* Color verde (como en tu concepto) */
+}
+
+/* Texto */
+.notification-text {
+    margin-right: 15px;
+}
+
+/* Spinner (como en tu concepto) */
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 </style>
 <body>
     <header class="main-header">
@@ -133,6 +186,11 @@ main {
         </div>
         <button id="back-button">Atras</button>
     </header>
+    <div id="download-notification" class="download-notification">
+        <i class="fas fa-check-circle notification-icon"></i>
+        <span class="notification-text">Actividad Completada. Descargándose documento, espere un momento.....</span>
+        <div class="spinner"></div>
+    </div>
 <main>
     <!-- SUBTÍTULO -->
     <div class="viewer-subtitle">
