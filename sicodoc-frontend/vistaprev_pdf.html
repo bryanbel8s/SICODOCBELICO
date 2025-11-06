@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SICODOC - Visor PDF</title>
+    <link rel="stylesheet" href="/sicodoc-frontend/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<style>
+.main-header button {
+    align-items: flex-end;
+    margin-left: auto;
+    margin-right: 20px;
+    padding: 8px 16px;
+    background-color: #ffffff;
+    color: #1b386b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    align-items: center;
+    align-content: end;
+    width: 80px;
+    height: 40px;
+}
+
+    .viewer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1b386b;
+    color: white;
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+.viewer-title {
+    font-weight: bold;
+}
+.viewer-btn-round {
+    background: white;
+    color: #1b386b;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    line-height: 30px;
+    cursor: pointer;
+}
+
+/* SUBTÍTULO */
+.viewer-subtitle {
+    background-color: #274c8c;
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.95em;
+}
+
+/* TOOLBAR */
+.viewer-toolbar {
+    background-color: #1b386b;
+    width: 100%;
+    max-width: 1920px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-bottom: 2px solid #1b386b;
+}
+.viewer-toolbar button {
+    background-color: #ffffff;
+    color: #1b386b;
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.viewer-toolbar button:hover {
+    background-color: #dfe6f2;
+}
+
+/* PDF */
+.pdf-container {
+    background-color: #e6e6e6;
+    width: 100%;
+    height: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+canvas {
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    background-color: white;
+}
+span{
+    color: white;
+}
+</style>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <img src="/sicodoc-frontend/assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo"> 
+            <h1>SICODOC</h1>
+        </div>
+        <button id="back-button">Atras</button>
+    </header>
+
+<!-- SUBTÍTULO -->
+    <div class="viewer-subtitle">
+    <h3 id="doc-name">2.3.4.1. Asesoría por proyecto de residencia profesional</h3>
+    </div>
+
+<!-- BARRA DE HERRAMIENTAS -->
+    <div class="viewer-toolbar">
+    <button id="prev">◀</button>
+    <span id="page-num">1</span> / <span id="page-count">1</span>
+    <button id="next">▶</button>
+    <button id="zoom-out">−</button>
+    <button id="zoom-in">+</button>
+    <button id="rotate">⟳</button>
+    <button id="download">💾</button>
+    <button id="print">🖨️</button>
+    </div>
+
+<!-- CANVAS PDF -->
+    <div class="pdf-container">
+    <canvas id="pdf-render"></canvas>
+    </div>
+
+<!-- FOOTER -->
+    <footer>
+    <div class="footer-content">
+    <img src="/sicodoc-frontend/assets/img/logo_azul_sin_fondo.png" alt="Logo TecNM" class="logo-foot">
+            <div class="footer-info">
+                <p>© Copyright 2025 TecNM - Todos los Derechos Reservados</p>
+                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa</p>
+                <p>Plataforma SICODOC 1.0</p>
+            </div>
+    <img src="/sicodoc-frontend/assets/img/logo_educacion_sin_fondo.png" alt="Logo Gobierno" class="logo-foot">
+    </div>
+    </footer>
+<script src="script.js"></script>
+</body>
+<img src="/sicodoc-frontend/assets/img/barra_abajo.jpg" alt="Banda institucional" height="35px">
+</html>
