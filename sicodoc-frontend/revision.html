@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista sin documentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
+    <style>
+        body {
+            font-family: 'Abel', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+
+
+        .logout-button {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .container {
+            display: flex;
+            margin: 20px;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h3 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .document-list {
+            list-style: none;
+        }
+
+        .document-list li {
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .document-list li:hover {
+            background-color: #f9fafb;
+        }
+
+        .main-content {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content h1 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .docent-section h2 {
+            color: #6b7280;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .docent-info {
+            font-size: 18px;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .document-viewer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #cbd5e0;
+        }
+
+        .document-preview {
+            width: 100%;
+            max-width: 700px;
+            height: 500px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .document-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            border: 1px solid #e2e8f0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .sign-button {
+            background-color: #1e3a8a;
+            color: white;
+        }
+
+        .reject-button {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .right-sidebar {
+            width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .rejected-button {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <img src="assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo">
+            <h1>SICODOC</h1>
+        </div>
+        <button id="back-button">Cerrar Sesión</button>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h3>Documentos</h3>
+            <ul class="document-list" id="documentList">
+                <li data-docent-id="1">2.3.4.1 Asesoría por proyecto de residencia profesional</li>
+                <li data-docent-id="2">1.4.1 Asesoría a estudiantes... en asignaturas de ciencias básicas</li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <h1>Programa de Estímulos al Desempeño Docente 2026</h1>
+            <div class="docent-section">
+                <h2>Docente en revisión</h2>
+                <div class="docent-info" id="docentName">Docente 1</div>
+            </div>
+            <div class="document-viewer-container">
+                <div class="document-preview">
+                    <img src="assets/img/1.1.1a.png" alt="Documento PDF">
+                </div>
+                <div class="actions">
+                    <button class="action-button sign-button">Firmar</button>
+                    <button class="action-button reject-button">Rechazar</button>
+                </div>
+            </div>
+        </main>
+
+        <aside class="right-sidebar">
+            <button class="rejected-button">Documentos Rechazados</button>
+        </aside>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <img src="assets/img/logo_azul_sin_fondo.png" alt="Logo SICODOC" class="logo-foot">
+            <div class="footer-info">
+                <p>© Copyright 2025 TecNM - Todos los Derechos Reservados</p>
+                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa</p>
+                <p>Plataforma SICODOC 1.0</p>
+            </div>
+            <img src="assets/img/logo_educacion_sin_fondo.png" alt="Gobierno del Estado" class="logo-foot">
+        </div>
+    </footer>
+
+    <img src="assets/img/barra_abajo.jpg" alt="Banda institucional" height="35px">
+
+    <script>
+        document.querySelector('.logout-button').addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>
