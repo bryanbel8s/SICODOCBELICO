@@ -3,12 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Documentos para Estímulo - SICODOC | TecNM</title>
+    <title>Vista sin documentos</title>
     <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/sicodoc-frontend/css/style.css";
 </head>
-<body>
+<style>
+        .document-icon {
+            font-size: 80px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+                .empty-state {
+            margin: 40px 0;
+        }
+
+        .empty-state h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 30px;
+        }
+
+        .error-note {
+            font-size: 14px;
+            color: #666;
+            margin-top: 60px;
+        }
+</style>
+<body>  
     <header class="main-header">
         <div class="container">
             <img src="/sicodoc-frontend/assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo">
@@ -16,21 +39,20 @@
         </div>
         <button id="back-button">Cerrar Sesion</button>
     </header>
+
     <main>
         <div class="contenido">
-            <h1 class="main-title">Mis Documentos para Estímulo</h1>
-            <button class="generate-btn">
-                Generar nuevo Documento <i class="fas fa-arrow-down"></i>
-            </button>
-            <div class="dropdown">
-                <select class="dropdown-select">
-                    <option>Mis Documentos Generados</option>
-                    <option>2.3.4.1. Asesoría por proyecto de residencia profesional</option>
-                    <option>1.4.1. Asesoría a estudiantes... en asignaturas de ciencias básicas</option>
-                    <option>1.1.5.1. Estudiantes atendidos en Ene-Jun</option>
-                    <option>1.2.1.2. Elaboración de manual de prácticas</option>
-                </select>
+            <h1>Mis Documentos para Estímulo</h1>
+            <div class="empty-state">
+                <h2>SIN DOCUMENTOS</h2>
+                <div class="document-icon">📄</div>
+                <p class="message">
+                    Hola <strong>[Nombre del Docente]</strong>. Por el momento, no hemos detectado actividades (como asesorías, tutorías, etc.) que requieran una constancia. Tus documentos aparecerán en esta lista automáticamente en cuanto sean procesados por el sistema.
+                </p>
             </div>
+            <p class="error-note">
+                Si crees que esto es un error, por favor contacta a la Subdirección Académica.
+            </p>
         </div>
     </main>
     <footer>

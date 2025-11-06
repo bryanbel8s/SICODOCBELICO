@@ -62,6 +62,23 @@ main {
     background-repeat: no-repeat;
     background-position: left;
 }
+/* sacado de el de chencho */
+    .main-header button {
+    align-items: flex-end;
+    margin-left: auto;
+    margin-right: 20px;
+    padding: 8px 16px;
+    background-color: #ffffff;
+    color: #1b386b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    align-items: center;
+    align-content: end;
+    width: 80px;
+    height: 40px;
+}
 
 .contenido {
     background-color: rgba(255, 255, 255, 0.95);
