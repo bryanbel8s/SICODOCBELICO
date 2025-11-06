@@ -8,30 +8,59 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
+    <style> 
+        .main-title {
+                text-align: center;
+                color: #003366;
+                margin-bottom: 30px;
+            }
+         .document-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 60px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .document-btn {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        
+        </style>
 </head>
 <body>
     <header class="main-header">
         <div class="container">
-            <img src="assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo">
+            <a href="home.html">
+                <img src="assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo">
+            </a>
             <h1>SICODOC</h1>
         </div>
         <button id="back-button">Cerrar Sesion</button>
     </header>
     <main>
-        <div class="contenido">
+        <div class="document-buttons" >        
             <h1 class="main-title">Mis Documentos para Estímulo</h1>
-            <button class="generate-btn">
-                Generar nuevo Documento <i class="fas fa-arrow-down"></i>
-            </button>
-            <div class="dropdown">
-                <select class="dropdown-select">
-                    <option>Mis Documentos Generados</option>
-                    <option>2.3.4.1. Asesoría por proyecto de residencia profesional</option>
-                    <option>1.4.1. Asesoría a estudiantes... en asignaturas de ciencias básicas</option>
-                    <option>1.1.5.1. Estudiantes atendidos en Ene-Jun</option>
-                    <option>1.2.1.2. Elaboración de manual de prácticas</option>
-                </select>
-            </div>
+
+            <button class="document-btn">2.3.4.1. Asesoría por proyecto de residencia profesional</button>
+            <button class="document-btn">1.4.1. Asesoría a estudiantes... en asignaturas de ciencias básicas</button>
+            <button class="document-btn">1.1.5.1. Estudiantes atendidos en Ene-Jun</button>
+            <button class="document-btn">1.2.1.2. Elaboración de manual de prácticas</button>
         </div>
     </main>
     <footer>

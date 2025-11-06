@@ -55,10 +55,10 @@ main {
     padding: 40px 20px;
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: left;
     justify-content: center;
-    background-image: url('../images/background.png');
-    background-size: 35%;
+    background-image: url('../assets/img/tec_sin.png');
+    background-size: 45%;
     background-repeat: no-repeat;
     background-position: left;
 }

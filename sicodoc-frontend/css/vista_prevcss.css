@@ -186,6 +186,7 @@ main {
     display: none;
 }
 
+
 /* Muestra el icono de check */
 .download-notification.is-ready .notification-icon {
     display: block;
