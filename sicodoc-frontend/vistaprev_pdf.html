@@ -127,24 +127,37 @@ main {
 
 /* Notificación de Descarga */
 .download-notification {
-    position: fixed; /* Fija la notificación en la parte superior de la ventana */
-    top: -100px;     /* Empieza oculta fuera de la pantalla */
-    left: 0;
-    width: 100%;
-    background-color: #274c8c; /* El color de tu barra de subtítulo */
+    position: fixed;
+    top: -100px; /* Empieza oculta fuera de la pantalla */
+
+    /* ===== INICIO DE LA MODIFICACIÓN ===== */
+    
+    /* 1. Centrado Horizontal */
+    left: 50%; /* Mueve el borde izquierdo de la caja al centro de la pantalla */
+    transform: translateX(-50%); /* Lo regresa a la izquierda por la mitad de su propio ancho */
+
+    /* 2. Ancho y Estilo (como tu concepto) */
+    width: auto; /* El ancho se ajustará al contenido */
+    max-width: 600px; /* Un ancho máximo (puedes ajustar esto) */
+    border-radius: 8px; /* Esquinas redondeadas */
+
+    /* 3. Alineación Interna (como tu concepto) */
+    justify-content: space-between; /* Empuja el spinner a la derecha */
+    
+    /* ===== FIN DE LA MODIFICACIÓN ===== */
+
+    background-color: #FFFFFF;
     color: white;
     padding: 15px 20px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    justify-content: center; /* Centra el contenido */
     font-size: 1.1em;
-    font-family: 'Abel', sans-serif; /* La fuente que usas */
+    font-family: 'Abel', sans-serif;
     z-index: 1000;
-    transition: top 0.5s ease-in-out; /* Esta es tu animación "lenta" */
+    transition: top 0.5s ease-in-out; /* La animación suave */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
 /* Clase que se añade con JS para mostrar la barra */
 .download-notification.show {
     top: 0; /* La barra baja a la posición 0 */
@@ -159,6 +172,7 @@ main {
 /* Texto */
 .notification-text {
     margin-right: 15px;
+    color: #333333;
 }
 
 /* Estilo básico para el GIF del spinner */
@@ -200,7 +214,7 @@ main {
     </header>
     <div id="download-notification" class="download-notification">
         <i class="fas fa-check-circle notification-icon"></i>
-        <span class="notification-text">Actividad Completada. Descargándose documento, espere un momento.....</span>
+        <span class="notification-text">ⓘ Actividad Completada. Descargándose documento, espere un momento.....</span>
         <img id="notification-spinner-gif" src="/sicodoc-frontend/assets/img/descarga-animacion-circulo.gif" alt="Cargando..." class="notification-spinner">
     </div>
 <main>
