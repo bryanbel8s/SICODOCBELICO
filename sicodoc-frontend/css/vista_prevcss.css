@@ -115,9 +115,10 @@ main {
 /* Notificación de Descarga */
 .download-notification {
     position: fixed; /* Fija la notificación en la parte superior de la ventana */
-    top: -100px;     /* Empieza oculta fuera de la pantalla */
-    left: 0;
-    width: 100%;
+    top: 100px;     /* Empieza oculta fuera de la pantalla */
+    right: 0;
+    width: 80%;
+    height: 100px;
     background-color: #274c8c; /* El color de tu barra de subtítulo */
     color: white;
     padding: 15px 20px;
@@ -153,7 +154,7 @@ main {
 .spinner {
     border: 3px solid rgba(255, 255, 255, 0.3);
     border-top: 3px solid #fff;
-    border-radius: 50%;
+    border-radius: 20%;
     width: 20px;
     height: 20px;
     animation: spin 1s linear infinite;
