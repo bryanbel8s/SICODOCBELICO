@@ -156,25 +156,38 @@ main {
     margin-right: 15px;
     color: #4CAF50; /* Color verde (como en tu concepto) */
 }
-
 /* Texto */
 .notification-text {
     margin-right: 15px;
 }
 
-/* Spinner (como en tu concepto) */
-.spinner {
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top: 3px solid #fff;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    animation: spin 1s linear infinite;
+/* Estilo básico para el GIF del spinner */
+.notification-spinner {
+    width: 28px; /* Ajusta el tamaño de tu GIF */
+    height: 28px; /* Ajusta el tamaño de tu GIF */
+    margin-right: 15px;
+    display: block; /* Por defecto se muestra */
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/* Icono de Check */
+.notification-icon {
+    font-size: 1.5em;
+    margin-right: 15px;
+    color: #4CAF50; /* Color verde */
+    display: none; /* Por defecto el check está oculto */
+}
+
+/* --- ESTADO 'LISTO' --- */
+/* Cuando añadimos la clase 'is-ready' con JS: */
+
+/* Oculta el GIF */
+.download-notification.is-ready .notification-spinner {
+    display: none;
+}
+
+/* Muestra el icono de check */
+.download-notification.is-ready .notification-icon {
+    display: block;
 }
 </style>
 <body>
@@ -188,7 +201,7 @@ main {
     <div id="download-notification" class="download-notification">
         <i class="fas fa-check-circle notification-icon"></i>
         <span class="notification-text">Actividad Completada. Descargándose documento, espere un momento.....</span>
-        <div class="spinner"></div>
+        <img id="notification-spinner-gif" src="/sicodoc-frontend/assets/img/descarga-animacion-circulo.gif" alt="Cargando..." class="notification-spinner">
     </div>
 <main>
     <!-- SUBTÍTULO -->
