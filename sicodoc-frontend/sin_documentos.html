@@ -15,7 +15,7 @@
             color: #333;
             margin-bottom: 30px;
         }
-                .empty-state {
+        .empty-state {
             margin: 40px 0;
         }
 
@@ -31,6 +31,11 @@
             color: #666;
             margin-top: 60px;
         }
+
+        .document-icon img {
+            width: 100px;
+            height: 100px;
+        }
 </style>
 <body>  
     <header class="main-header">
@@ -38,15 +43,14 @@
             <img src="assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo">
             <h1>SICODOC</h1>
         </div>
-        <button id="back-button">Cerrar Sesion</button>
+        <button id="back-button" class="header-button">Cerrar Sesion</button>
     </header>
-
     <main>
         <div class="contenido">
-            <h1>Mis Documentos para Estímulo</h1>
+            <h1 class="main-title">Mis Documentos para Estímulo</h1>
             <div class="empty-state">
                 <h2>SIN DOCUMENTOS</h2>
-                <div class="document-icon">📄</div>
+                <div class="document-icon"><img src="/sicodoc-frontend/assets/img/circulo-de-documento-incorrecto.png"></div>
                 <p class="message">
                     Hola <strong>[Nombre del Docente]</strong>. Por el momento, no hemos detectado actividades (como asesorías, tutorías, etc.) que requieran una constancia. Tus documentos aparecerán en esta lista automáticamente en cuanto sean procesados por el sistema.
                 </p>

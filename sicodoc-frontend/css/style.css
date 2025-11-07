@@ -33,7 +33,7 @@ header .container {
     gap: 10px;
     width: 100%;
     max-width: 1400px;
-    margin: 0 auto;
+    margin-right: auto; /* <--- LÍNEA CORREGIDA */
 }
 
 header .logo {
@@ -78,6 +78,37 @@ main {
     align-content: end;
     width: 80px;
     height: 40px;
+}
+
+.header-button {
+    /* Estilos que ya tenías */
+    background-color: #ffffff;
+    color: #1b386b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    height: 40px;
+    padding: 8px 16px; /* Asegúrate de tener padding */
+    margin-right: 20px; /* Asegúrate de tener margen si es necesario */
+    
+    /* ===== INICIO DE LA MODIFICACIÓN ===== */
+    
+    /* 2. Añade la transición para que el movimiento sea suave */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    
+    /* 3. Estado inicial (sin levantarse) */
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil opcional */
+}
+
+/* 4. Estado "Hover": lo que pasa al poner el mouse encima */
+.header-button:hover {
+    /* 5. Mueve el botón 3 píxeles hacia arriba */
+    transform: translateY(-3px);
+    
+    /* Opcional: Aumenta la sombra para dar más efecto de "profundidad" */
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.15);
 }
 
 .contenido {
