@@ -14,7 +14,7 @@
                 color: #003366;
                 margin-bottom: 30px;
             }
-         .document-buttons {
+        .document-buttons {
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -57,10 +57,29 @@
         <div class="document-buttons" >        
             <h1 class="main-title">Mis Documentos para Estímulo</h1>
 
-            <button class="document-btn">2.3.4.1. Asesoría por proyecto de residencia profesional</button>
-            <button class="document-btn">1.4.1. Asesoría a estudiantes... en asignaturas de ciencias básicas</button>
-            <button class="document-btn">1.1.5.1. Estudiantes atendidos en Ene-Jun</button>
-            <button class="document-btn">1.2.1.2. Elaboración de manual de prácticas</button>
+<button class="document-btn" 
+                    data-doc-id="2.3.4.1" 
+                    data-doc-name="Asesoría por proyecto de residencia profesional">
+                2.3.4.1. Asesoría por proyecto de residencia profesional
+            </button>
+            
+            <button class="document-btn" 
+                    data-doc-id="1.4.1" 
+                    data-doc-name="Asesoría a estudiantes en ciencias básicas">
+                1.4.1. Asesoría a estudiantes... en asignaturas de ciencias básicas
+            </button>
+            
+            <button class="document-btn" 
+                    data-doc-id="1.1.5.1" 
+                    data-doc-name="Estudiantes atendidos en Ene-Jun">
+                1.1.5.1. Estudiantes atendidos en Ene-Jun
+            </button>
+            
+            <button class="document-btn" 
+                    data-doc-id="1.2.1.2" 
+                    data-doc-name="Elaboración de manual de prácticas">
+                1.2.1.2. Elaboración de manual de prácticas
+            </button>
         </div>
     </main>
     <footer>
@@ -74,6 +93,7 @@
             <img src="assets/img/logo_educacion_sin_fondo.png" alt="Gobierno del Estado" class="logo-foot">
         </div>
     </footer>
+    <script src="js/home.js"></script>
 </body>
 <img src="assets/img/barra_abajo.jpg" alt="Banda institucional">
 </html>

@@ -1,3 +1,5 @@
 # Archivos del sistema operativo
 .DS_Store
 Thumbs.db
+# Ignorar credenciales del backend
+/api/credentials.json

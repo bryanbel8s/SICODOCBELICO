@@ -8,7 +8,7 @@ CREATE TABLE areas (
   id_area INT IDENTITY(1,1) PRIMARY KEY,
   nombre NVARCHAR(150) NOT NULL,
   tipo_area NVARCHAR(50) CHECK (tipo_area IN (
-    'Dirección', 'Subdirección', 'Departamento', 'División', 'Centro', 'Oficina', 'Comité'
+    'Direcciï¿½n', 'Subdirecciï¿½n', 'Departamento', 'Divisiï¿½n', 'Centro', 'Oficina', 'Comitï¿½'
   )),
   id_superior INT NULL,
   FOREIGN KEY (id_superior) REFERENCES areas(id_area)
@@ -70,7 +70,7 @@ CREATE TABLE carreras (
   id_carrera INT IDENTITY(1,1) PRIMARY KEY,
   nombre NVARCHAR(150) NOT NULL,
   clave NVARCHAR(20) UNIQUE NOT NULL,
-  nivel NVARCHAR(50) CHECK (nivel IN ('Licenciatura', 'Maestría', 'Doctorado')),
+  nivel NVARCHAR(50) CHECK (nivel IN ('Licenciatura', 'Maestrï¿½a', 'Doctorado')),
   id_departamento INT NOT NULL,
   FOREIGN KEY (id_departamento) REFERENCES areas(id_area)
 )
