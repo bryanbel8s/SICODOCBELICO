@@ -6,10 +6,7 @@ const docId = params.get('id');       // Ej: "2.3.4.1"
 const docName = params.get('name');   // Ej: "Asesoría por proyecto..."
 
 // 2. CONSTRUIR LA URL DE LA API
-// ▼▼▼ ¡ESTA ES LA LÍNEA CLAVE! ▼▼▼
-// Apunta a tu backend de Node.js que está corriendo en el puerto 3000
 const url = `http://localhost:3000/api/get-pdf/${docId}`; 
-// ▲▲▲ FIN DE LA LÍNEA CLAVE ▲▲▲
 
 // 3. ACTUALIZAR EL TÍTULO EN LA PÁGINA
 document.getElementById("doc-name").textContent = docName;
@@ -22,11 +19,11 @@ let pdfDoc = null,
     canvas = document.getElementById("pdf-render"),
     ctx = canvas.getContext("2d");
 
-// --- Referencias de la Notificación ---
+// --- Referencias de la Notificación (CORREGIDAS) ---
 const downloadNotification = document.getElementById("download-notification");
 const notificationText = document.getElementById("notification-text");
-const notificationIconCheck = document.getElementById("notification-icon-check") || document.querySelector(".notification-icon");
-const notificationSpinner = document.getElementById("notification-spinner-gif") || document.querySelector(".notification-spinner");
+const notificationIconCheck = document.getElementById("notification-icon-check"); // <-- Referencia limpia
+const notificationSpinner = document.getElementById("notification-spinner-gif"); // <-- Referencia limpia
 let isNotifying = false;
 
 // 4. CARGAR EL PDF (Ahora desde la URL de tu API)
@@ -80,7 +77,8 @@ document.getElementById("rotate").onclick = () => {
 };
 
 
-// --- LÓGICA DE DESCARGA (Usando fetch, ya apunta a la API) ---
+// --- LÓGICA DE DESCARGA (CORREGIDA) ---
+// Ahora usa las referencias limpias a los IDs
 document.getElementById("download").onclick = () => {
     if (isNotifying) return;
     isNotifying = true;
