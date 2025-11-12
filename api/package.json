@@ -5,14 +5,15 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "node --loader ts-node/esm src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "dev": "npm run build && npm run start",
+    "start": "node dist/index.js",
+    "build": "tsc"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "googleapis": "^165.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
