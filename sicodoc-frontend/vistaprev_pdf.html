@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,53 +12,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
 </head>
+
 <body>
     <header class="main-header">
         <div class="container">
-            <img src="assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo"> 
+            <img src="assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo">
             <h1>SICODOC</h1>
         </div>
         <button id="back-button" class="header-button">Atras</button>
     </header>
     <div id="download-notification" class="download-notification">
-    <i id="notification-icon-check" class="fas fa-check-circle notification-icon"></i>
-    <span id="notification-text" class="notification-text">ⓘ Actividad Completada. Descargándose documento, espere un momento.....</span>
-    <img id="notification-spinner-gif" src="assets/img/descarga-animacion-circulo.gif" alt="Cargando..." class="notification-spinner">
-</div>
-<main>
-    <!-- SUBTÍTULO -->
-    <div class="viewer-subtitle">
-    <h3 id="doc-name">2.3.4.1. Asesoría por proyecto de residencia profesional</h3>
+        <i id="notification-icon-check" class="fas fa-check-circle notification-icon"></i>
+        <span id="notification-text" class="notification-text">ⓘ Actividad Completada. Descargándose documento, espere
+            un momento.....</span>
+        <img id="notification-spinner-gif" src="assets/img/descarga-animacion-circulo.gif" alt="Cargando..."
+            class="notification-spinner">
     </div>
-<!-- BARRA DE HERRAMIENTAS -->
-    <div class="viewer-toolbar">
-    <button id="prev">◀</button>
-    <span id="page-num">1</span> / <span id="page-count">1</span>
-    <button id="next">▶</button>
-    <button id="zoom-out">−</button>
-    <button id="zoom-in">+</button>
-    <button id="rotate">⟳</button>
-    <button id="download">💾</button>
-    <button id="print">🖨️</button>
-    </div>
-<!-- CANVAS PDF -->
-    <div class="pdf-container">
-    <canvas id="pdf-render"></canvas>
-    </div>
-</main>
-<!-- FOOTER -->
+    <main>
+        <!-- SUBTÍTULO -->
+        <div class="viewer-subtitle">
+            <h3 id="doc-name">2.3.4.1. Asesoría por proyecto de residencia profesional</h3>
+        </div>
+        <!-- BARRA DE HERRAMIENTAS -->
+        <div class="viewer-toolbar">
+            <button id="prev">◀</button>
+            <span id="page-num">1</span> / <span id="page-count">1</span>
+            <button id="next">▶</button>
+            <button id="zoom-out">−</button>
+            <button id="zoom-in">+</button>
+            <button id="rotate">⟳</button>
+            <button id="download">💾</button>
+            <button id="print">🖨️</button>
+        </div>
+        <!-- CANVAS PDF -->
+        <div class="pdf-container">
+            <canvas id="pdf-render"></canvas>
+        </div>
+    </main>
+    <!-- FOOTER -->
     <footer>
-    <div class="footer-content">
-    <img src="assets/img/logo_azul_sin_fondo.png" alt="Logo TecNM" class="logo-foot">
+        <div class="footer-content">
+            <img src="assets/img/logo_azul_sin_fondo.png" alt="Logo TecNM" class="logo-foot">
             <div class="footer-info">
                 <p>© Copyright 2025 TecNM - Todos los Derechos Reservados</p>
-                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa</p>
+                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa
+                </p>
                 <p>Plataforma SICODOC 1.0</p>
             </div>
-    <img src="assets/img/logo_educacion_sin_fondo.png" alt="Logo Gobierno" class="logo-foot">
-    </div>
+            <img src="assets/img/logo_educacion_sin_fondo.png" alt="Logo Gobierno" class="logo-foot">
+        </div>
     </footer>
-<script src="js/script_preview_pdf.js"></script>
+    <script src="js/script_preview_pdf.js"></script>
 </body>
 <img src="assets/img/barra_abajo.jpg" alt="Banda institucional" height="35px">
+
 </html>

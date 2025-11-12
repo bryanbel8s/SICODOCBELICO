@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,15 +16,18 @@
         color: #333;
         margin-bottom: 30px;
     }
+
     .empty-state {
         margin: 40px 0;
     }
+
     .empty-state h2 {
         font-size: 22px;
         font-weight: 600;
         color: #000;
         margin-bottom: 30px;
     }
+
     .container2 {
         background-color: white;
         border-radius: 8px;
@@ -32,27 +36,32 @@
         max-width: 800px;
         padding: 30px;
     }
+
     .container2 h1 {
         color: #1e3a8a;
         font-size: 24px;
         margin-bottom: 10px;
         text-align: center;
     }
+
     .container2 h2 {
         color: #6b7280;
         font-size: 18px;
         margin-bottom: 25px;
         text-align: center;
     }
+
     .error-note {
         font-size: 14px;
         color: #666;
         margin-top: 60px;
         text-align: center;
     }
+
     .documents-list {
         margin-top: 20px;
     }
+
     .document-item {
         background-color: #f9f9f9;
         border: 1px solid #ddd;
@@ -64,15 +73,18 @@
         align-items: center;
         transition: background-color 0.2s;
     }
+
     .document-item:hover {
         background-color: #f0f0f0;
     }
+
     .document-item h3 {
         margin: 0;
         color: #333;
         font-size: 16px;
         font-weight: 500;
     }
+
     .document-status {
         color: #f59e0b;
         font-size: 14px;
@@ -80,19 +92,22 @@
         padding: 4px 10px;
         border-radius: 12px;
         background-color: rgba(245, 158, 11, 0.1);
-    }.document-item-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-}
-.document-item {
-    /* Tus estilos actuales para document-item */
-    padding: 10px;
-    border: 1px solid #ccc;
-    margin-bottom: 5px;
-}
+    }
 
+    .document-item-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .document-item {
+        /* Tus estilos actuales para document-item */
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin-bottom: 5px;
+    }
 </style>
+
 <body>
     <header class="main-header">
         <div class="container">
@@ -133,14 +148,15 @@
             <img src="assets/img/logo_azul_sin_fondo.png" alt="Logo SICODOC" class="logo-foot">
             <div class="footer-info">
                 <p>© Copyright 2025 TecNM - Todos los Derechos Reservados</p>
-                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa</p>
+                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa
+                </p>
                 <p>Plataforma SICODOC 1.0</p>
             </div>
             <img src="assets/img/logo_educacion_sin_fondo.png" alt="Gobierno del Estado" class="logo-foot">
         </div>
     </footer>
     <script>
-        document.getElementById('back-button').addEventListener('click', function() {
+        document.getElementById('back-button').addEventListener('click', function () {
             if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
                 window.location.href = 'login.html';
             }
@@ -148,4 +164,5 @@
     </script>
 </body>
 <img src="assets/img/barra_abajo.jpg" alt="Banda institucional" height="35px">
+
 </html>

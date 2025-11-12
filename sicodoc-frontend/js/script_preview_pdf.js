@@ -6,7 +6,7 @@ const docId = params.get('id');       // Ej: "2.3.4.1"
 const docName = params.get('name');   // Ej: "Asesoría por proyecto..."
 
 // 2. CONSTRUIR LA URL DE LA API
-const url = `http://localhost:3000/api/get-pdf/${docId}`; 
+const url = `http://localhost:3000/api/get-pdf/${docId}`;
 
 // 3. ACTUALIZAR EL TÍTULO EN LA PÁGINA
 document.getElementById("doc-name").textContent = docName;
@@ -39,15 +39,15 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
 // --- Función de Renderizado (Sin cambios) ---
 function renderPage(num) {
     pdfDoc.getPage(num).then(page => {
-    const viewport = page.getViewport({ scale, rotation });
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-    const renderCtx = {
-        canvasContext: ctx,
-        viewport: viewport
-    };
-    page.render(renderCtx);
-    document.getElementById("page-num").textContent = num;
+        const viewport = page.getViewport({ scale, rotation });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        const renderCtx = {
+            canvasContext: ctx,
+            viewport: viewport
+        };
+        page.render(renderCtx);
+        document.getElementById("page-num").textContent = num;
     });
 }
 
@@ -111,7 +111,7 @@ document.getElementById("download").onclick = () => {
             notificationText.textContent = "Error al preparar la descarga.";
             if (notificationSpinner) notificationSpinner.style.display = 'none';
             if (notificationIconCheck) notificationIconCheck.style.display = 'none';
-            
+
             setTimeout(() => {
                 downloadNotification.classList.remove('show');
                 isNotifying = false;
@@ -124,7 +124,7 @@ document.getElementById("download").onclick = () => {
 document.getElementById("print").onclick = () => {
     const iframe = document.createElement("iframe");
     iframe.style.display = "none";
-    iframe.src = url; 
+    iframe.src = url;
     document.body.appendChild(iframe);
     iframe.contentWindow.focus();
     iframe.contentWindow.print();

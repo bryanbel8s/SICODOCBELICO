@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             padding: 0;
             background-color: #f5f7fa;
         }
+
         .logout-button {
             background-color: transparent;
             color: white;
@@ -23,12 +25,14 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         .container {
             display: flex;
             margin: 20px;
             gap: 20px;
             height: calc(100vh - 120px);
         }
+
         .sidebar {
             width: 250px;
             background-color: white;
@@ -36,25 +40,30 @@
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .sidebar h3 {
             color: #1e3a8a;
             margin-bottom: 20px;
             font-size: 18px;
         }
+
         .document-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .document-list li {
             padding: 10px;
             border-bottom: 1px solid #e5e7eb;
             cursor: pointer;
             color: #6b7280;
         }
+
         .document-list li:hover {
             background-color: #f9fafb;
         }
+
         .main-content {
             flex: 1;
             background-color: white;
@@ -64,23 +73,27 @@
             display: flex;
             flex-direction: column;
         }
+
         .main-content h1 {
             color: #1e3a8a;
             font-size: 24px;
             margin-bottom: 20px;
             text-align: center;
         }
+
         .docent-section h2 {
             color: #6b7280;
             font-size: 18px;
             margin-bottom: 10px;
         }
+
         .docent-info {
             font-size: 18px;
             font-weight: 500;
             color: #1f2937;
             margin-bottom: 20px;
         }
+
         .document-viewer-container {
             flex: 1;
             display: flex;
@@ -92,6 +105,7 @@
             padding: 20px;
             border: 1px solid #cbd5e0;
         }
+
         .document-preview {
             width: 100%;
             max-width: 700px;
@@ -106,17 +120,20 @@
             padding: 20px;
             position: relative;
         }
+
         .document-preview img {
             max-width: 100%;
             max-height: 100%;
             border: 1px solid #e2e8f0;
         }
+
         .actions {
             display: flex;
             gap: 20px;
             justify-content: center;
             margin-top: 20px;
         }
+
         .action-button {
             padding: 12px 30px;
             border: none;
@@ -125,14 +142,17 @@
             font-weight: 500;
             font-size: 16px;
         }
+
         .sign-button {
             background-color: #1e3a8a;
             color: white;
         }
+
         .reject-button {
             background-color: #ef4444;
             color: white;
         }
+
         .right-sidebar {
             width: 250px;
             background-color: white;
@@ -140,6 +160,7 @@
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .rejected-button {
             background-color: #ef4444;
             color: white;
@@ -151,6 +172,7 @@
             font-weight: 500;
             font-size: 16px;
         }
+
         .notification {
             position: fixed;
             top: 70px;
@@ -172,6 +194,7 @@
         }
     </style>
 </head>
+
 <body>
     <header class="main-header">
         <div class="container">
@@ -213,7 +236,8 @@
             <img src="assets/img/logo_azul_sin_fondo.png" alt="Logo SICODOC" class="logo-foot">
             <div class="footer-info">
                 <p>© Copyright 2025 TecNM - Todos los Derechos Reservados</p>
-                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa</p>
+                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa
+                </p>
                 <p>Plataforma SICODOC 1.0</p>
             </div>
             <img src="assets/img/logo_educacion_sin_fondo.png" alt="Gobierno del Estado" class="logo-foot">
@@ -259,7 +283,7 @@
             closeButton.style.border = 'none';
             closeButton.style.cursor = 'pointer';
             closeButton.style.fontSize = '18px';
-            closeButton.onclick = function() {
+            closeButton.onclick = function () {
                 notification.remove();
             };
 
@@ -274,19 +298,20 @@
             }, 5000);
         }
 
-        document.querySelector('.logout-button').addEventListener('click', function() {
+        document.querySelector('.logout-button').addEventListener('click', function () {
             if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
                 window.location.href = 'login.html';
             }
         });
 
-        document.querySelector('.sign-button').addEventListener('click', function() {
+        document.querySelector('.sign-button').addEventListener('click', function () {
             showNotification('Firmaste el documento (DOCUMENTO 1.4.1)');
         });
 
-        document.querySelector('.reject-button').addEventListener('click', function() {
+        document.querySelector('.reject-button').addEventListener('click', function () {
             showNotification('Rechazaste el documento (DOCUMENTO 1.4.1)', true);
         });
     </script>
 </body>
+
 </html>
