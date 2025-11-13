@@ -1,5 +1,5 @@
 import express from "express";
-import { getPdf } from "../controladores/pdf.ctrl";
+import { getPdf } from "../controladores/pdf.ctrl.js";
 
 const router = express.Router();
 

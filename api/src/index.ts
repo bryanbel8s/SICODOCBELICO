@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import pdfRoutes from "./rutas/pdf.ruta";
+import pdfRoutes from "./rutas/pdf.ruta.js";
 
 const app = express();
 const PORT = 3000;

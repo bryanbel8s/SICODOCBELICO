@@ -1,5 +1,31 @@
-# Archivos del sistema operativo
+# === Archivos del sistema operativo ===
 .DS_Store
 Thumbs.db
-# Ignorar credenciales del backend
+
+# === Credenciales sensibles ===
 /api/credentials.json
+.env
+
+# === Node (backend y frontend) ===
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# === Python (carpeta api/python) ===
+api/python/venv/
+api/python/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# === VS Code y temporales ===
+.vscode/
+__pycache__/
+.DS_Store
+Thumbs.db
+
+# === Logs y backups ===
+*.log
+*.bak
