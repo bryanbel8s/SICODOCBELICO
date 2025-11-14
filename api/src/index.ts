@@ -1,18 +1,17 @@
 import express from "express";
 import cors from "cors";
-import pdfRoutes from "./rutas/pdf.ruta.js";
+
+import pdfRouter from "./rutas/pdf.ruta.js";
+import authRouter from "./rutas/auth.ruta.js";
 
 const app = express();
-const PORT = 3000;
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Rutas principales
-app.use("/api", pdfRoutes);
+// rutas
+app.use("/api/pdf", pdfRouter);
+app.use("/api/auth", authRouter);
 
-// Servidor
-app.listen(PORT, () => {
-    console.log(`✅ Backend de SICODOC ejecutándose en http://localhost:${PORT}`);
-});
+const PORT = 3000;
+app.listen(PORT, () => console.log("API en puerto", PORT));
