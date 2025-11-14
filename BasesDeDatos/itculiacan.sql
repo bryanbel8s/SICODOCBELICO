@@ -203,6 +203,31 @@ CREATE TABLE firmas_documento (
 )
 GO
 
+--NUEVA TABLA 
+CREATE TABLE datos_laborales (
+    id_laboral INT IDENTITY(1,1) PRIMARY KEY,
+    id_personal INT NOT NULL,
+
+    categoria_actual NVARCHAR(200),
+    horas_actual INT,
+    estatus_actual NVARCHAR(50),
+
+    categoria_anterior NVARCHAR(200),
+    horas_anterior INT,
+    estatus_anterior NVARCHAR(50),
+
+    clave_presupuestal NVARCHAR(100),
+    fecha_efectos DATE,
+
+    porcentaje_asistencia INT,
+
+    fecha_actualizacion DATE DEFAULT GETDATE(),
+
+    FOREIGN KEY (id_personal) REFERENCES personal(id_personal)
+)
+GO
+
+
 -- ==============================
 -- 🔹 Índices para AREAS
 -- ==============================
@@ -557,5 +582,3 @@ VALUES
  (1, 3, 1, 0, NULL),  -- Docente (id_personal 3)
  (1, 1, 2, 0, NULL)   -- Director (id_personal 1)
 GO
-
-
