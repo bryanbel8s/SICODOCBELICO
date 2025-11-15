@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { drive } from "../servicios/googledrive.js";
+import { drive } from "../servicios/googledrive";
 
 // Mapa de IDs de documentos
 const plantillaMap: Record<string, string> = {

@@ -1,66 +1,79 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { pool, poolConnect } from "../servicios/db.js";
-import { crearToken } from "../servicios/jwt.js";
+import { pool } from "../db";
+import { crearToken } from "../servicios/jwt";
 
 export async function login(req: Request, res: Response) {
     const { correo, password } = req.body;
 
-    if (!correo || !password)
+    if (!correo || !password) {
         return res.status(400).json({ error: "Faltan datos" });
+    }
 
     try {
-        await poolConnect;
-        const request = pool.request();
-
+        // ============================
+        // CONSULTA EN POSTGRESQL
+        // ============================
         const query = `
             SELECT 
-                u.RFC, u.NOMBRE, u.APELLIDO, u.CORREO,
-                u.CONTRASENA_HASH, u.IDROL,
-                r.NOMBREROL
-            FROM USUARIO u
-            JOIN ROL r ON r.IDROL = u.IDROL
-            WHERE u.CORREO = @correo
+                u.rfc,
+                u.nombre,
+                u.apellido,
+                u.correo,
+                u.contrasena_hash,
+                u.idrol,
+                r.nombrerol
+            FROM usuario u
+            JOIN rol r ON r.idrol = u.idrol
+            WHERE u.correo = $1
+            LIMIT 1
         `;
 
-        request.input("correo", correo);
+        const result = await pool.query(query, [correo]);
 
-        const result = await request.query(query);
-
-        if (result.recordset.length === 0)
+        if (result.rows.length === 0) {
             return res.status(404).json({ error: "Correo no encontrado" });
+        }
 
-        const user = result.recordset[0];
+        const user = result.rows[0];
 
-        const storedHash = user.CONTRASENA_HASH.toString("utf8");
+        // ============================
+        // VALIDACIÓN DE CONTRASEÑA
+        // ============================
+        const storedHash = user.contrasena_hash;
 
-        const valid = bcrypt.compareSync(password, storedHash);
-        if (!valid)
+        const valid = await bcrypt.compare(password, storedHash);
+
+        if (!valid) {
             return res.status(401).json({ error: "Contraseña incorrecta" });
+        }
 
+        // ============================
+        // CREACIÓN DEL TOKEN
+        // ============================
         const token = crearToken({
-            rfc: user.RFC,
-            nombre: user.NOMBRE,
-            apellido: user.APELLIDO,
-            correo: user.CORREO,
-            idrol: user.IDROL,
-            rol: user.NOMBREROL,
+            rfc: user.rfc,
+            nombre: user.nombre,
+            apellido: user.apellido,
+            correo: user.correo,
+            idrol: user.idrol,
+            rol: user.nombrerol
         });
 
         return res.json({
             message: "Login exitoso",
             token,
             usuario: {
-                rfc: user.RFC,
-                nombre: user.NOMBRE,
-                apellido: user.APELLIDO,
-                correo: user.CORREO,
-                rol: user.NOMBREROL,
-                idrol: user.IDROL
+                rfc: user.rfc,
+                nombre: user.nombre,
+                apellido: user.apellido,
+                correo: user.correo,
+                rol: user.nombrerol,
+                idrol: user.idrol
             }
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error login:", error);
         return res.status(500).json({ error: "Error interno del servidor" });
     }

@@ -1,17 +1,19 @@
 import express from "express";
+import morgan from "morgan";
 import cors from "cors";
+import dotenv from "dotenv";
+import rutas from "./rutas/api.router";
 
-import pdfRouter from "./rutas/pdf.ruta.js";
-import authRouter from "./rutas/auth.ruta.js";
+dotenv.config();
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
+app.use(morgan("dev"));
 
-// rutas
-app.use("/api/pdf", pdfRouter);
-app.use("/api/auth", authRouter);
+app.use("/api", rutas);
 
-const PORT = 3000;
-app.listen(PORT, () => console.log("API en puerto", PORT));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 SICODOC API corriendo en puerto ${PORT}`);
+});

@@ -3,8 +3,8 @@
 Thumbs.db
 
 # === Credenciales sensibles ===
-/api/credentials.json
 .env
+/api/credentials.json
 
 # === Node (backend y frontend) ===
 node_modules/
@@ -23,9 +23,23 @@ api/python/__pycache__/
 # === VS Code y temporales ===
 .vscode/
 __pycache__/
-.DS_Store
-Thumbs.db
 
 # === Logs y backups ===
 *.log
 *.bak
+
+# === Docker ===
+# Evita subir builds o basura generada
+docker-compose.override.yml
+**/.dockerignore
+**/Dockerfile*
+
+# === Evitar subir volúmenes de Docker ===
+/volumes/
+/data/
+postgres-data/
+pgadmin-data/
+
+# === Impedimos subir los contenedores construidos ===
+**/tmp/
+**/.cache/

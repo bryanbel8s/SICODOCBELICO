@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16
+    container_name: sicodoc-db
+    environment:
+      POSTGRES_USER: sicodoc_user
+      POSTGRES_PASSWORD: SicodocPass123
+      POSTGRES_DB: sicodoc
+    ports:
+      - "5432:5432"
+    volumes:
+      - sicodoc_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@sicodoc.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  api:
+    build: ./api
+    working_dir: /app
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgres://sicodoc_user:SicodocPass123@db:5432/sicodoc
+      JWT_SECRET: SICODOC_SUPER_SECRET_2025
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+volumes:
+  sicodoc_data:
