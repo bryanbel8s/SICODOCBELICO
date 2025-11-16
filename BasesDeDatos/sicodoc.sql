@@ -1,206 +1,156 @@
-CREATE DATABASE SICODOC
-GO
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-USE SICODOC
-GO
+-- ==========================================
+--               TABLA ROL
+-- ==========================================
+CREATE TABLE rol (
+  idrol SERIAL PRIMARY KEY,
+  nombrerol VARCHAR(100) NOT NULL UNIQUE
+);
 
-CREATE TABLE ROL(
-  IDROL INT IDENTITY(1,1) PRIMARY KEY,
-  NOMBREROL NVARCHAR(100) NOT NULL UNIQUE
-)
-GO
+-- ==========================================
+--               TABLA USUARIO
+-- ==========================================
+CREATE TABLE usuario (
+  rfc VARCHAR(13) PRIMARY KEY
+      CHECK (LENGTH(rfc) = 13 AND rfc ~ '^[A-Z0-9]+$'),
+  nombre VARCHAR(255) NOT NULL,
+  apellido VARCHAR(255) NOT NULL,
+  correo VARCHAR(255) NOT NULL UNIQUE
+      CHECK (correo LIKE '%@%.%'),
+  contrasena_hash TEXT NOT NULL,
+  firma_digital BYTEA,
+  idrol INT NOT NULL,
+  FOREIGN KEY (idrol) REFERENCES rol(idrol)
+);
 
-CREATE TABLE USUARIO(
-  RFC NVARCHAR(13) NOT NULL PRIMARY KEY
-      CHECK (LEN(RFC) = 13 AND RFC COLLATE Latin1_General_CS_AS NOT LIKE '%[^A-Z0-9]%'),
-  NOMBRE NVARCHAR(255) NOT NULL,
-  APELLIDO NVARCHAR(255) NOT NULL,
-  CORREO NVARCHAR(255) NOT NULL UNIQUE,
-  CONSTRAINT CK_USUARIO_CORREO CHECK (CORREO LIKE '%@%.%'),
-  CONTRASENA_HASH VARBINARY(256) NOT NULL,
-  FIRMA_DIGITAL VARBINARY(MAX) NULL,
-  IDROL INT NOT NULL,
-  CONSTRAINT FK_USUARIO_ROL FOREIGN KEY(IDROL) REFERENCES ROL(IDROL)
-)
-GO
+-- ==========================================
+--               TABLA CONVOCATORIA
+-- ==========================================
+CREATE TABLE convocatoria (
+  idconvocatoria SERIAL PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  fechainicioregistro DATE NOT NULL,
+  fechafinregistro DATE NOT NULL,
+  fechainicioevaluacion DATE NOT NULL,
+  fechafinevaluacion DATE NOT NULL,
+  fecha_pub DATE NOT NULL
+);
 
-CREATE TABLE CONVOCATORIA(
-  IDCONVOCATORIA INT IDENTITY(1,1) PRIMARY KEY,
-  NOMBRE NVARCHAR(100) NOT NULL,
-  FECHAINICIOREGISTRO DATE NOT NULL,
-  FECHAFINREGISTRO DATE NOT NULL,
-  FECHAINICIOEVALUACION DATE NOT NULL,
-  FECHAFINEVALUACION DATE NOT NULL,
-  FECHA_PUB DATE NOT NULL
-)
-GO
+-- ==========================================
+--               TABLA EXPEDIENTE
+-- ==========================================
+CREATE TABLE expediente (
+  idexpediente SERIAL PRIMARY KEY,
+  estado VARCHAR(100) NOT NULL,
+  rfc_usuario VARCHAR(13) NOT NULL,
+  idconvocatoria INT NOT NULL,
+  fechacreacion TIMESTAMP DEFAULT NOW(),
+  FOREIGN KEY (rfc_usuario) REFERENCES usuario(rfc),
+  FOREIGN KEY (idconvocatoria) REFERENCES convocatoria(idconvocatoria)
+);
 
-CREATE TABLE EXPEDIENTE(
-  IDEXPEDIENTE INT IDENTITY(1,1) PRIMARY KEY,
-  ESTADO NVARCHAR(100) NOT NULL,
-  RFC_USUARIO NVARCHAR(13) NOT NULL,
-  IDCONVOCATORIA INT NOT NULL,
-  FECHACREACION DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
-  CONSTRAINT FK_EXPEDIENTE_USUARIO FOREIGN KEY(RFC_USUARIO) REFERENCES USUARIO(RFC),
-  CONSTRAINT FK_EXPEDIENTE_CONVOCATORIA FOREIGN KEY(IDCONVOCATORIA) REFERENCES CONVOCATORIA(IDCONVOCATORIA)
-)
-GO
+-- ==========================================
+--               TABLA DOCUMENTO
+-- ==========================================
+CREATE TABLE documento (
+  iddocumento SERIAL PRIMARY KEY,
+  tipo VARCHAR(100) NOT NULL,
+  fechageneracion TIMESTAMP DEFAULT NOW(),
+  rfc_usuario VARCHAR(13) NOT NULL,
+  idexpediente INT NOT NULL,
+  idcomite INT,
+  id_personal_itc INT,
+  FOREIGN KEY (rfc_usuario) REFERENCES usuario(rfc),
+  FOREIGN KEY (idexpediente) REFERENCES expediente(idexpediente)
+);
 
-CREATE TABLE DOCUMENTO(
-  IDDOCUMENTO INT IDENTITY(1,1) PRIMARY KEY,
-  TIPO NVARCHAR(100) NOT NULL,
-  FECHAGENERACION DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
-  RFC_USUARIO NVARCHAR(13) NOT NULL,
-  IDEXPEDIENTE INT NOT NULL,
-  IDCOMITE INT NULL,
-  CONSTRAINT FK_DOCUMENTO_USUARIO FOREIGN KEY(RFC_USUARIO) REFERENCES USUARIO(RFC),
-  CONSTRAINT FK_DOCUMENTO_EXPEDIENTE FOREIGN KEY(IDEXPEDIENTE) REFERENCES EXPEDIENTE(IDEXPEDIENTE)
-)
-GO
---NUEVA COLUMNA
-ALTER TABLE DOCUMENTO
-ADD ID_PERSONAL_ITC INT NULL
-GO
+-- ==========================================
+--          TABLA REVISION_DOCUMENTO
+-- ==========================================
+CREATE TABLE revision_documento (
+  idrevision SERIAL PRIMARY KEY,
+  iddocumento INT NOT NULL,
+  rfc_director VARCHAR(13) NOT NULL,
+  estado VARCHAR(50) DEFAULT 'En revisión'
+      CHECK (estado IN ('En revisión', 'Aprobado', 'Rechazado')),
+  comentarios TEXT,
+  fecha_revision TIMESTAMP DEFAULT NOW(),
+  firma_digital BYTEA,
+  FOREIGN KEY (iddocumento) REFERENCES documento(iddocumento),
+  FOREIGN KEY (rfc_director) REFERENCES usuario(rfc)
+);
 
-CREATE TABLE REVISION_DOCUMENTO (
-  IDREVISION INT IDENTITY(1,1) PRIMARY KEY,
-  IDDOCUMENTO INT NOT NULL,
-  RFC_DIRECTOR NVARCHAR(13) NOT NULL,
-  ESTADO NVARCHAR(50) DEFAULT 'En revisión' 
-      CHECK (ESTADO IN ('En revisión', 'Aprobado', 'Rechazado')),
-  COMENTARIOS NVARCHAR(MAX) NULL,
-  FECHA_REVISION DATETIME2 DEFAULT SYSUTCDATETIME(),
-  FIRMA_DIGITAL VARBINARY(MAX) NULL,
-  CONSTRAINT FK_REVISION_DOCUMENTO_DOC 
-      FOREIGN KEY(IDDOCUMENTO) REFERENCES DOCUMENTO(IDDOCUMENTO),
-  CONSTRAINT FK_REVISION_DOCUMENTO_DIRECTOR 
-      FOREIGN KEY(RFC_DIRECTOR) REFERENCES USUARIO(RFC)
-)
-GO
-
--- VISTA para los DOCENTES
+-- ==========================================
+--            VISTA DOCENTES
+-- ==========================================
 CREATE VIEW v_documentos_docente AS
 SELECT 
-  d.IDDOCUMENTO,
-  d.TIPO,
-  d.FECHAGENERACION,
-  d.RFC_USUARIO AS RFC_DOCENTE,
-  u.NOMBRE + ' ' + u.APELLIDO AS NOMBRE_DOCENTE,
-  ISNULL(r.ESTADO, 'En proceso') AS ESTADO_REVISION,
-  r.RFC_DIRECTOR,
-  r.FECHA_REVISION
-FROM DOCUMENTO d
-LEFT JOIN REVISION_DOCUMENTO r 
-  ON r.IDDOCUMENTO = d.IDDOCUMENTO
-JOIN USUARIO u 
-  ON u.RFC = d.RFC_USUARIO
-GO
+  d.iddocumento,
+  d.tipo,
+  d.fechageneracion,
+  d.rfc_usuario AS rfc_docente,
+  (u.nombre || ' ' || u.apellido) AS nombre_docente,
+  COALESCE(r.estado, 'En proceso') AS estado_revision,
+  r.rfc_director,
+  r.fecha_revision
+FROM documento d
+LEFT JOIN revision_documento r
+  ON r.iddocumento = d.iddocumento
+JOIN usuario u
+  ON u.rfc = d.rfc_usuario;
 
--- VISTA para los DIRECTORES
+-- ==========================================
+--            VISTA DIRECTORES
+-- ==========================================
 CREATE VIEW v_revision_pendiente_director AS
-SELECT 
-  r.IDREVISION,
-  d.IDDOCUMENTO,
-  d.TIPO,
-  u.NOMBRE + ' ' + u.APELLIDO AS DOCENTE,
-  d.FECHAGENERACION,
-  r.ESTADO,
-  r.COMENTARIOS
-FROM REVISION_DOCUMENTO r
-JOIN DOCUMENTO d 
-  ON d.IDDOCUMENTO = r.IDDOCUMENTO
-JOIN USUARIO u 
-  ON u.RFC = d.RFC_USUARIO
-WHERE r.ESTADO = 'En revisión'
-GO
+SELECT
+  r.idrevision,
+  d.iddocumento,
+  d.tipo,
+  (u.nombre || ' ' || u.apellido) AS docente,
+  d.fechageneracion,
+  r.estado,
+  r.comentarios
+FROM revision_documento r
+JOIN documento d ON d.iddocumento = r.iddocumento
+JOIN usuario u ON u.rfc = d.rfc_usuario
+WHERE r.estado = 'En revisión';
 
--- ==============================
--- 🔹 Índices para USUARIOS
--- ==============================
-CREATE INDEX IX_USUARIO_NOMBRE ON USUARIO(NOMBRE)
-CREATE INDEX IX_USUARIO_ROL ON USUARIO(IDROL)
-CREATE INDEX IX_USUARIO_CORREO ON USUARIO(CORREO)
+-- ==========================================
+--              ÍNDICES USUARIO
+-- ==========================================
+CREATE INDEX ix_usuario_nombre ON usuario(nombre);
+CREATE INDEX ix_usuario_rol ON usuario(idrol);
+CREATE INDEX ix_usuario_correo ON usuario(correo);
 
--- ==============================
--- 🔹 Índices para CONVOCATORIA
--- ==============================
-CREATE INDEX IX_CONVOCATORIA_FECHAS ON CONVOCATORIA(FECHAINICIOREGISTRO, FECHAFINREGISTRO)
-CREATE INDEX IX_CONVOCATORIA_NOMBRE ON CONVOCATORIA(NOMBRE)
+-- ==========================================
+--              ÍNDICES CONVOCATORIA
+-- ==========================================
+CREATE INDEX ix_convocatoria_fechas
+  ON convocatoria(fechainicioregistro, fechafinregistro);
 
--- ==============================
--- 🔹 Índices para EXPEDIENTE
--- ==============================
-CREATE INDEX IX_EXPEDIENTE_USUARIO ON EXPEDIENTE(RFC_USUARIO)
-CREATE INDEX IX_EXPEDIENTE_CONVOCATORIA ON EXPEDIENTE(IDCONVOCATORIA)
-CREATE INDEX IX_EXPEDIENTE_ESTADO ON EXPEDIENTE(ESTADO)
+CREATE INDEX ix_convocatoria_nombre
+  ON convocatoria(nombre);
 
--- ==============================
--- 🔹 Índices para DOCUMENTO
--- ==============================
-CREATE INDEX IX_DOCUMENTO_TIPO ON DOCUMENTO(TIPO)
-CREATE INDEX IX_DOCUMENTO_EXPEDIENTE ON DOCUMENTO(IDEXPEDIENTE)
-CREATE INDEX IX_DOCUMENTO_USUARIO ON DOCUMENTO(RFC_USUARIO)
-CREATE INDEX IX_DOCUMENTO_ESTADO ON DOCUMENTO(IDEXPEDIENTE, TIPO, FECHAGENERACION)
+-- ==========================================
+--              ÍNDICES EXPEDIENTE
+-- ==========================================
+CREATE INDEX ix_expediente_usuario ON expediente(rfc_usuario);
+CREATE INDEX ix_expediente_convocatoria ON expediente(idconvocatoria);
+CREATE INDEX ix_expediente_estado ON expediente(estado);
 
--- ==============================
--- 🔹 Índices para REVISION_DOCUMENTO
--- ==============================
-CREATE INDEX IX_REVISION_DOC ON REVISION_DOCUMENTO(IDDOCUMENTO)
-CREATE INDEX IX_REVISION_DIRECTOR ON REVISION_DOCUMENTO(RFC_DIRECTOR)
-CREATE INDEX IX_REVISION_ESTADO ON REVISION_DOCUMENTO(ESTADO, FECHA_REVISION)
+-- ==========================================
+--              ÍNDICES DOCUMENTO
+-- ==========================================
+CREATE INDEX ix_documento_tipo ON documento(tipo);
+CREATE INDEX ix_documento_expediente ON documento(idexpediente);
+CREATE INDEX ix_documento_usuario ON documento(rfc_usuario);
+CREATE INDEX ix_documento_estado ON documento(idexpediente, tipo, fechageneracion);
 
--- ==============================
--- 🔹 Índices para CONSULTAS FRECUENTES EN VISTAS
--- ==============================
--- Búsquedas por docente o director en las vistas
-CREATE INDEX IX_VDOC_DOCENTE ON DOCUMENTO(RFC_USUARIO, FECHAGENERACION)
-CREATE INDEX IX_VREV_DIRECTOR_ESTADO ON REVISION_DOCUMENTO(RFC_DIRECTOR, ESTADO)
-
-GO
-
--- ----- ROLES (sin comité/admin como pediste) -----
-SET IDENTITY_INSERT ROL ON;
-INSERT INTO ROL (IDROL, NOMBREROL) VALUES
- (1, 'Docente'),
- (2, 'Director'),
- (3, 'Subdirector'),
- (4, 'Jefe de Departamento'),
- (5, 'Secretaria');
-SET IDENTITY_INSERT ROL OFF;
-GO
-
--- ----- USUARIOS (sincronizados por RFC del personal/RH) -----
-INSERT INTO USUARIO (RFC, NOMBRE, APELLIDO, CORREO, CONTRASENA_HASH, FIRMA_DIGITAL, IDROL)
-VALUES
-('PEGJ750101A01', 'Juan', 'Pérez', 'juan.perez@itculiacan.edu.mx', CAST('FAKEHASH1' AS VARBINARY(256)), NULL, 2),
-('LORM780223A02', 'María', 'López', 'maria.lopez@itculiacan.edu.mx', CAST('FAKEHASH2' AS VARBINARY(256)), NULL, 3),
-('SATO820315A03', 'Carlos', 'Sánchez', 'carlos.sanchez@itculiacan.edu.mx', CAST('FAKEHASH3' AS VARBINARY(256)), NULL, 1),
-('GAMU850412A04', 'Ana', 'García', 'ana.garcia@itculiacan.edu.mx', CAST('FAKEHASH4' AS VARBINARY(256)), NULL, 1),
-('RAFL900519A05', 'Luis', 'Ramírez', 'luis.ramirez@itculiacan.edu.mx', CAST('FAKEHASH5' AS VARBINARY(256)), NULL, 1),
-('HESM910617A06', 'Mariana', 'Hernández', 'mariana.hernandez@itculiacan.edu.mx', CAST('FAKEHASH6' AS VARBINARY(256)), NULL, 1),
-('MAOJ920824A07', 'José', 'Martínez', 'jose.martinez@itculiacan.edu.mx', CAST('FAKEHASH7' AS VARBINARY(256)), NULL, 1),
-('TOVE931002A08', 'Lucía', 'Torres', 'lucia.torres@itculiacan.edu.mx', CAST('FAKEHASH8' AS VARBINARY(256)), NULL, 1),
-('NULA950115A09', 'Pedro', 'Núñez', 'pedro.nunez@itculiacan.edu.mx', CAST('FAKEHASH9' AS VARBINARY(256)), NULL, 1),
-('CRDV970220A10', 'Verónica', 'Cruz', 'veronica.cruz@itculiacan.edu.mx', CAST('FAKEHASH10' AS VARBINARY(256)), NULL, 1);
-GO
-
--- ----- CONVOCATORIA SPD 2025 -----
-INSERT INTO CONVOCATORIA (NOMBRE, FECHAINICIOREGISTRO, FECHAFINREGISTRO, FECHAINICIOEVALUACION, FECHAFINEVALUACION, FECHA_PUB)
-VALUES ('Convocatoria SPD 2025', '2025-05-01', '2025-05-31', '2025-06-01', '2025-06-07', GETDATE());
-GO
-
--- ----- EXPEDIENTE y DOCUMENTO (ejemplo de flujo) -----
--- Crear un expediente para Carlos (RFC SATO...)
-INSERT INTO EXPEDIENTE (ESTADO, RFC_USUARIO, IDCONVOCATORIA)
-VALUES ('Abierto', 'SATO820315A03', 1);
-GO
-
--- Documento del expediente (ejemplo)
-INSERT INTO DOCUMENTO (TIPO, RFC_USUARIO, IDEXPEDIENTE)
-VALUES ('Constancia de Participación', 'SATO820315A03', 1);
-GO
-
--- ----- REVISIONES -----
-INSERT INTO REVISION_DOCUMENTO (IDDOCUMENTO, RFC_DIRECTOR, ESTADO, COMENTARIOS)
-VALUES (1, 'PEGJ750101A01', 'En revisión', 'Revisión inicial por Dirección');
-GO
+-- ==========================================
+--          ÍNDICES REVISION_DOCUMENTO
+-- ==========================================
+CREATE INDEX ix_revision_doc ON revision_documento(iddocumento);
+CREATE INDEX ix_revision_director ON revision_documento(rfc_director);
+CREATE INDEX ix_revision_estado ON revision_documento(estado, fecha_revision);

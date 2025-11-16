@@ -1,5 +1,5 @@
 services:
-  db:
+  sicodoc-db:
     image: postgres:16
     container_name: sicodoc-db
     environment:
@@ -7,31 +7,58 @@ services:
       POSTGRES_PASSWORD: SicodocPass123
       POSTGRES_DB: sicodoc
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - sicodoc_data:/var/lib/postgresql/data
 
+  itc-db:
+    image: postgres:16
+    container_name: itc-db
+    environment:
+      POSTGRES_USER: itc_user
+      POSTGRES_PASSWORD: ItcPass123
+      POSTGRES_DB: itculiacan
+    ports:
+      - "5434:5432"
+    volumes:
+      - itc_data:/var/lib/postgresql/data
+
   pgadmin:
     image: dpage/pgadmin4
+    ports:
+      - "8080:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@sicodoc.com
       PGADMIN_DEFAULT_PASSWORD: admin123
-    ports:
-      - "8080:80"
     depends_on:
-      - db
+      - sicodoc-db
+      - itc-db
 
   api:
     build: ./api
-    working_dir: /app
     environment:
       PORT: 3000
-      DATABASE_URL: postgres://sicodoc_user:SicodocPass123@db:5432/sicodoc
-      JWT_SECRET: SICODOC_SUPER_SECRET_2025
+
+      # Base SICODOC
+      PG1_HOST: sicodoc-db
+      PG1_PORT: 5432
+      PG1_DB: sicodoc
+      PG1_USER: sicodoc_user
+      PG1_PASS: SicodocPass123
+
+      # Base ITC
+      PG2_HOST: itc-db
+      PG2_PORT: 5432
+      PG2_DB: itculiacan
+      PG2_USER: itc_user
+      PG2_PASS: ItcPass123
+
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - sicodoc-db
+      - itc-db
 
 volumes:
   sicodoc_data:
+  itc_data:
