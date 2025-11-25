@@ -423,3 +423,41 @@ VALUES (
  '2026-06-01', '2026-06-07',
  '2025-11-17'
 );
+
+-- Un expediente por docente para la Convocatoria SPD 2025 (idconvocatoria = 1)
+INSERT INTO expediente (estado, rfc_usuario, idconvocatoria)
+SELECT
+  'En captura' AS estado,
+  u.rfc,
+  1 AS idconvocatoria       -- Convocatoria SPD 2025
+FROM usuario u
+JOIN rol r ON r.idrol = u.idrol
+WHERE r.nombrerol = 'Docente';
+
+-- Obtenemos el expediente de Norma para la SPD 2025
+-- (asumimos que solo tiene uno para esa convocatoria)
+WITH exp_norma AS (
+  SELECT idexpediente
+  FROM expediente
+  WHERE rfc_usuario = 'NORE010101GOC'
+    AND idconvocatoria = 1
+  LIMIT 1
+)
+
+INSERT INTO documento (tipo, rfc_usuario, idexpediente, idcomite, id_personal_itc)
+SELECT tipo_doc, 'NORE010101GOC', e.idexpediente, NULL, 37
+FROM exp_norma e
+CROSS JOIN (
+  VALUES
+    ('1.1.0 - Constancia de Situación Laboral'),
+    ('1.1.5.1 - Constancia de Tutorías'),
+    ('1.1.6 - Documento de Acreditación CONAIC'),
+    ('1.1.7 - Actividades Complementarias'),
+    ('1.2.1 - Recurso Educativo Digital'),
+    ('1.2.1.3 - Estrategias Didácticas Innovadoras'),
+    ('1.3.1 - Exención de Examen Profesional'),
+    ('03A - Formato de Horario de Actividades'),
+    ('04 - Carta de Exclusividad Laboral'),
+    ('06 - Constancia Actualización CVU'),
+    ('07 - Constancia de Carga Académica')
+) AS t(tipo_doc);

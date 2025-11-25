@@ -591,3 +591,500 @@ VALUES
 (36, 'Base', 40, '2021-05-16', NULL, 30500.00, 'LZSS770101AAL', 'LZSS770101HCLOPN36', '01234567926', NULL),
 (37, 'Base', 40, '2022-01-01', NULL, 29500.00, 'RIAL860101AAM', 'RIAL860101HCLOPN37', '01234567927', NULL),
 (38, 'Base', 40, '2020-04-11', NULL, 31000.00, 'IGUR870101AAN', 'IGUR870101HCLOPN38', '01234567928', NULL);
+
+INSERT INTO categorias_edd (nombre, descripcion) VALUES
+('1.1 Actividades de Docencia', 'Evidencias de docencia del docente'),
+('1.2 Actividades de Innovación y Mejora', 'Estrategias, recursos y proyectos innovadores'),
+('1.3 Actividades de Titulación', 'Titulación, asesorías, exámenes profesionales'),
+('1.4 Actividades de Formación Profesional', 'Cursos, seminarios, congresos'),
+('03A Horario', 'Formato de actividades del docente'),
+('04 Exclusividad Laboral', 'Documento de exclusividad del TecNM'),
+('06 CVU', 'Actualización de currículum'),
+('07 Constancias Servicios Escolares', 'Documentos emitidos por Servicios Escolares');
+
+
+INSERT INTO tipos_documento (id_categoria, nombre_doc, descripcion, plantilla_archivo, requiere_firmas, num_firmas) VALUES
+(1, '1.1.0 - Constancia de Situación Laboral', 'Documento oficial emitido por Recursos Humanos', 'plantilla1.pdf', FALSE, 0),
+(1, '1.1.5.1 - Constancia de Tutorías', 'Constancia de labores de tutoría', 'plantilla2.pdf', FALSE, 0),
+(1, '1.1.6 - Documento de Acreditación CONAIC', 'Acreditación de programa educativo', 'plantilla3.pdf', FALSE, 0),
+(1, '1.1.7 - Actividades Complementarias', 'Actividades realizadas por el docente', 'plantilla4.pdf', FALSE, 0),
+
+(2, '1.2.1 - Recurso Educativo Digital', 'Evidencia de creación de recursos educativos', 'plantilla5.pdf', FALSE, 0),
+(2, '1.2.1.3 - Estrategias Didácticas Innovadoras', 'Implementación de estrategias docentes', 'plantilla6.pdf', FALSE, 0),
+
+(3, '1.3.1 - Exención de Examen Profesional', 'Constancia de exención para titulación', 'plantilla7.pdf', FALSE, 0),
+
+(5, '03A - Formato de Horario de Actividades', 'Horario de actividades docente', 'plantilla8.pdf', FALSE, 0),
+(6, '04 - Carta de Exclusividad Laboral', 'Carta firmada por el docente', 'plantilla9.pdf', FALSE, 0),
+(7, '06 - Constancia Actualización CVU', 'Constancia emitida por Desarrollo Académico', 'plantilla10.pdf', FALSE, 0),
+(8, '07 - Constancia de Carga Académica', 'Documento con materias impartidas', 'plantilla11.pdf', FALSE, 0);
+
+--1.1.0 – Constancia de Situación Laboral
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(1, 'nombre'),
+(1, 'filiacion'),
+(1, 'fecha_inicio'),
+(1, 'fecha_dos'),
+(1, 'estatus_completo'),
+(1, 'categoria_anterior'),
+(1, 'categoria_actual'),
+(1, 'clave_presupuestal'),
+(1, 'fecha_efectos'),
+(1, 'estatus_actual'),
+(1, 'horas');
+
+--Documento 1.1.5.1 – Constancia de Tutorías
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(2, 'nombre'),
+(2, 'depto'),
+(2, 'fecha1'),
+(2, 'fecha2'),
+(2, 'tutoria'),
+(2, 'tutoria2'),
+(2, 'total'),
+(2, 'carrera1'),
+(2, 'carrera2');
+
+--Documento 1.1.6 – Acreditación CONAIC
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(3, 'programa'),
+(3, 'fecha_inicio'),
+(3, 'fecha_fin'),
+(3, 'fecha_emision');
+
+--Documento 1.1.7 – Actividades Complementarias
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(4, 'nombre'),
+(4, 'semestre'),
+(4, 'dictamen'),
+(4, 'fecha');
+
+--Documento 1.2.1 – Recurso Educativo Digital
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(5, 'nombre'),
+(5, 'mes1'),
+(5, 'mes2'),
+(5, 'ano'),
+(5, 'materia'),
+(5, 'programa'),
+(5, 'fecha');
+
+--Documento 1.2.1.3 – Estrategias Didácticas Innovadoras
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(6, 'nombre'),
+(6, 'fecha'),
+(6, 'asignatura'),
+(6, 'estrategia'),
+(6, 'programa');
+
+--Documento 1.3.1 – Exención de Examen Profesional
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(7, 'nombre_jurado'),
+(7, 'numero_control'),
+(7, 'tecnologico'),
+(7, 'clave'),
+(7, 'carrera'),
+(7, 'titulacion'),
+(7, 'dia'),
+(7, 'mes'),
+(7, 'ano'),
+(7, 'presidente'),
+(7, 'cedula'),
+(7, 'secretario'),
+(7, 'cedula2'),
+(7, 'vocal'),
+(7, 'cedula3');
+
+--Documento 03A – Formato de Horario de Actividades
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(8, 'nombre'),
+(8, 'escolaridad'),
+(8, 'clave_plaza'),
+(8, 'periodo_escolar'),
+
+-- actividades académicas
+(8, 'asig1'), (8, 'grupo1'), (8, 'aula1'), (8, 'modalidad1'),
+(8, 'lunes1'), (8, 'martes1'), (8, 'miercoles1'), (8, 'jueves1'), (8, 'viernes1'),
+
+(8, 'asig2'), (8, 'grupo2'), (8, 'aula2'), (8, 'modalidad2'),
+(8, 'lunes2'), (8, 'martes2'), (8, 'miercoles2'), (8, 'jueves2'), (8, 'viernes2'),
+
+(8, 'asig3'), (8, 'grupo3'), (8, 'aula3'), (8, 'modalidad3'),
+(8, 'lunes3'), (8, 'martes3'), (8, 'miercoles3'), (8, 'jueves3'), (8, 'viernes3'),
+
+-- actividades de apoyo
+(8, 'act1'), (8, 'horario_act1'),
+(8, 'act2'), (8, 'horario_act2'),
+(8, 'act3'), (8, 'horario_act3'),
+
+(8, 'total_horas'),
+(8, 'fecha_emision');
+
+--Documento 04 – Carta de Exclusividad Laboral
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(9, 'nombre'),
+(9, 'filiacion'),
+(9, 'clave_presupuestal'),
+(9, 'fecha');
+
+--Documento 06 – Constancia Actualización CVU
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(10, 'nombre'),
+(10, 'registro'),
+(10, 'fecha_emision'),
+(10, 'anio_cvu');
+
+--Documento 07 – Constancia de Carga Académica
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo) VALUES
+(11, 'nombre'),
+(11, 'expediente'),
+(11, 'periodo1'), (11, 'nivel1'), (11, 'clave1'), (11, 'materia1'), (11, 'alumnos1'),
+(11, 'periodo2'), (11, 'nivel2'), (11, 'clave2'), (11, 'materia2'), (11, 'alumnos2'),
+(11, 'periodo3'), (11, 'nivel3'), (11, 'clave3'), (11, 'materia3'), (11, 'alumnos3'),
+(11, 'periodo4'), (11, 'nivel4'), (11, 'clave4'), (11, 'materia4'), (11, 'alumnos4'),
+(11, 'periodo5'), (11, 'nivel5'), (11, 'clave5'), (11, 'materia5'), (11, 'alumnos5'),
+(11, 'periodo6'), (11, 'nivel6'), (11, 'clave6'), (11, 'materia6'), (11, 'alumnos6'),
+(11, 'total');
+
+-- 1 a 11: documentos reales de Norma
+INSERT INTO documentos_generados
+(id_documento, id_tipo_doc, id_docente, fecha_creacion, estado, archivo_final, qr_text)
+VALUES
+-- 1) 1.1.0 – Constancia de Situación Laboral
+(1, 1, 37, '2025-06-09', 'Aprobado',
+ 'norma_1_1_0_constancia_situacion_laboral.pdf',
+ 'DOC:1|RFC=NORE010101GOC|TIPO=1.1.0'),
+
+-- 2) 1.1.5.1 – Constancia de Tutorías
+(2, 2, 37, '2025-06-11', 'Aprobado',
+ 'norma_1_1_5_1_constancia_tutorias.pdf',
+ 'DOC:2|RFC=NORE010101GOC|TIPO=1.1.5.1'),
+
+-- 3) 1.1.6 – Acreditación CONAIC
+(3, 3, 37, '2022-11-30', 'Aprobado',
+ 'norma_1_1_6_acreditacion_conaic.pdf',
+ 'DOC:3|PROG=ING-TIC|TIPO=1.1.6'),
+
+-- 4) 1.1.7 – Actividades Complementarias
+(4, 4, 37, '2025-06-18', 'Aprobado',
+ 'norma_1_1_7_actividades_complementarias.pdf',
+ 'DOC:4|SEM=Ene-Jun 2024|TIPO=1.1.7'),
+
+-- 5) 1.2.1 – Recurso Educativo Digital
+(5, 5, 37, '2025-06-16', 'Aprobado',
+ 'norma_1_2_1_recurso_digital.pdf',
+ 'DOC:5|MAT=Fundamentos de Programacion'),
+
+-- 6) 1.2.1.3 – Estrategias Didácticas Innovadoras
+(6, 6, 37, '2025-06-13', 'Aprobado',
+ 'norma_1_2_1_3_estrategias_didacticas.pdf',
+ 'DOC:6|MAT=Ingenieria de Software'),
+
+-- 7) 1.3.1 – Exención de Examen Profesional
+(7, 7, 37, '2024-06-28', 'Aprobado',
+ 'norma_1_3_1_exencion_examen_profesional.pdf',
+ 'DOC:7|TIPO=1.3.1'),
+
+-- 8) 03A – Horario de actividades
+(8, 8, 37, '2024-06-01', 'Aprobado',
+ 'norma_03A_horario_actividades.pdf',
+ 'DOC:8|FORMATO=03A|PERIODO=Junio 2024'),
+
+-- 9) 04 – Carta de Exclusividad Laboral
+(9, 9, 37, '2025-05-30', 'Aprobado',
+ 'norma_04_carta_exclusividad.pdf',
+ 'DOC:9|TIPO=04|EXCLUSIVIDAD'),
+
+-- 10) 06 – Constancia Actualización CVU
+(10, 10, 37, '2024-06-11', 'Aprobado',
+ 'norma_06_constancia_cvu.pdf',
+ 'DOC:10|REG=IT199258|ANIO=2024'),
+
+-- 11) 07 – Constancia de Carga Académica
+(11, 11, 37, '2025-06-09', 'Aprobado',
+ 'norma_07_constancia_carga_academica.pdf',
+ 'DOC:11|TOTAL_ALUMNOS=242');
+
+-- Ajustar secuencia
+SELECT setval('documentos_generados_id_documento_seq',
+              (SELECT MAX(id_documento) FROM documentos_generados));
+
+/* =========================================
+   1) 1.1.0 – Constancia de Situación Laboral
+   id_documento = 1
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 1 AS id_documento, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',           'NORMA REBECA GODOY CASTRO'),
+    ('filiacion',        'GOCN771202MSLDR09'),
+    ('fecha_inicio',     '2009-09-16'),      -- ingreso al Tec
+    ('fecha_dos',        '2024-01-01'),
+    ('estatus_completo', 'TIEMPO COMPLETO'),
+    ('categoria_anterior','DOCENTE ASOCIADO A'),
+    ('categoria_actual', 'DOCENTE TITULAR A'),
+    ('clave_presupuestal','1402-010068-285-1500-001'),
+    ('fecha_efectos',    '2024-01-01'),
+    ('estatus_actual',   'BASE'),
+    ('horas',            '40')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 1 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   2) 1.1.5.1 – Constancia de Tutorías
+   id_documento = 2
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 2, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',   'NORMA REBECA GODOY CASTRO'),
+    ('depto',    'Depto. de Sistemas y Computación'),
+    ('fecha1',   'Enero-Junio 2024'),
+    ('fecha2',   'Agosto-Diciembre 2024'),
+    ('tutoria',  '22 tutorados'),
+    ('tutoria2', '24 tutorados'),
+    ('total',    '46 tutorados'),
+    ('carrera1', 'Ingeniería en Sistemas Computacionales'),
+    ('carrera2', 'Ingeniería en Sistemas Computacionales')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 2 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   3) 1.1.6 – Acreditación CONAIC
+   id_documento = 3
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 3, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('programa',      'Ingeniería en Tecnologías de la Información y Comunicación'),
+    ('fecha_inicio',  '2022-11-30'),
+    ('fecha_fin',     '2027-11-29'),
+    ('fecha_emision', '2022-11-30')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 3 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   4) 1.1.7 – Actividades Complementarias
+   id_documento = 4
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 4, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',   'NORMA REBECA GODOY CASTRO'),
+    ('semestre', 'enero - junio 2024'),
+    ('dictamen', 'DCFINTALCINJ2241'),
+    ('fecha',    '2025-06-18')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 4 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   5) 1.2.1 – Recurso Educativo Digital
+   id_documento = 5
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 5, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',  'NORMA REBECA GODOY CASTRO'),
+    ('mes1',    'agosto'),
+    ('mes2',    'diciembre'),
+    ('ano',     '2024'),
+    ('materia', 'Fundamentos de programación'),
+    ('programa','Ingeniería en Sistemas Computacionales'),
+    ('fecha',   '2025-06-16')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 5 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   6) 1.2.1.3 – Estrategias Didácticas Innovadoras
+   id_documento = 6
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 6, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',     'NORMA REBECA GODOY CASTRO'),
+    ('fecha',      '2025-06-13'),
+    ('asignatura', 'Ingeniería de software'),
+    ('estrategia', 'Aprendizaje basado en proyectos'),
+    ('programa',   'Ingeniería en Sistemas Computacionales')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 6 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   7) 1.3.1 – Exención de Examen Profesional
+   id_documento = 7
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 7, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre_jurado', 'MARIA ALEJANDRA NEVAREZ MIGUEL'),
+    ('numero_control','18170409'),
+    ('tecnologico',   'Instituto Tecnológico de Culiacán'),
+    ('clave',         '25DIT000021'),
+    ('carrera',       'Ingeniería en Sistemas Computacionales'),
+    ('titulacion',    'Titulación integral: informe técnico de residencia profesional'),
+    ('dia',           '28'),
+    ('mes',           'junio'),
+    ('ano',           '2024'),
+    ('presidente',    'ING. MARIA ALEJANDRA NEVÁREZ MIGUEL'),
+    ('cedula',        'Cédula Prof. 18170409'),
+    ('secretario',    'ING. LAURA LILIA BARRAZA CÁRDENAS'),
+    ('cedula2',       'Cédula Prof. 18170151'),
+    ('vocal',         'ING. JUAN CARLOS LÓPEZ LÓPEZ'),
+    ('cedula3',       'Cédula Prof. 18170612')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 7 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   8) 03A – Horario de Actividades
+   id_documento = 8
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 8, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',        'NORMA REBECA GODOY CASTRO'),
+    ('escolaridad',   'MCE EN CIENCIAS DE LA COMPUTACIÓN'),
+    ('clave_plaza',   '1402-010068-285-1500'),
+    ('periodo_escolar','Junio 2024'),
+
+    -- Asignatura 1
+    ('asig1',        'FUNDAMENTOS DE PROGRAMACIÓN'),
+    ('grupo1',       'AEF-1031-093'),
+    ('aula1',        '027'),
+    ('modalidad1',   'EB'),
+    ('lunes1',       '11:00-12:00'),
+    ('martes1',      '11:00-12:00'),
+    ('miercoles1',   '11:00-12:00'),
+    ('jueves1',      '11:00-12:00'),
+    ('viernes1',     '11:00-12:00'),
+
+    -- Asignatura 2
+    ('asig2',        'INGENIERÍA DE SOFTWARE'),
+    ('grupo2',       'SCD-1011-093'),
+    ('aula2',        '027'),
+    ('modalidad2',   'EB'),
+    ('lunes2',       '10:00-11:00'),
+    ('martes2',      '10:00-11:00'),
+    ('miercoles2',   '10:00-11:00'),
+    ('jueves2',      '10:00-11:00'),
+    ('viernes2',     '10:00-11:00'),
+
+    -- Asignatura 3
+    ('asig3',        'BASE DE DATOS'),
+    ('grupo3',       'AEF-1031-093'),
+    ('aula3',        '027'),
+    ('modalidad3',   'EB'),
+    ('lunes3',       '09:00-10:00'),
+    ('martes3',      '09:00-10:00'),
+    ('miercoles3',   '09:00-10:00'),
+    ('jueves3',      '09:00-10:00'),
+    ('viernes3',     '09:00-10:00'),
+
+    -- Actividades de apoyo
+    ('act1',         'PRESENTAR ASESORÍAS DOCENTES A ESTUDIANTES'),
+    ('horario_act1', '07:00-09:00'),
+    ('act2',         'TUTORÍAS'),
+    ('horario_act2', '09:00-11:00'),
+    ('act3',         'OTRAS ACTIVIDADES'),
+    ('horario_act3', '11:00-13:00'),
+
+    ('total_horas',  '40'),
+    ('fecha_emision','2024-06-01')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 8 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   9) 04 – Carta de Exclusividad Laboral
+   id_documento = 9
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 9, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',          'NORMA REBECA GODOY CASTRO'),
+    ('filiacion',       'GOCN771202MSLDR09'),
+    ('clave_presupuestal','1402-010068-285-1500-001'),
+    ('fecha',           '2025-06-01')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 9 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   10) 06 – Constancia Actualización CVU
+   id_documento = 10
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 10, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',        'NORMA REBECA GODOY CASTRO'),
+    ('registro',      'IT199258'),
+    ('fecha_emision', '2024-06-11'),
+    ('anio_cvu',      '2024')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 10 AND c.nombre_campo = v.nombre_campo;
+
+
+/* =========================================
+   11) 07 – Constancia de Carga Académica
+   id_documento = 11
+========================================= */
+INSERT INTO valores_documento (id_documento, id_campo, valor)
+SELECT 11, c.id_campo, v.valor
+FROM campos_documento c
+JOIN (
+  VALUES
+    ('nombre',    'NORMA REBECA GODOY CASTRO'),
+    ('expediente','8950'),
+
+    ('periodo1','ENE-JUN 2024'), ('nivel1','LICENCIATURA'),
+    ('clave1','AEF1285'), ('materia1','FUNDAMENTOS DE PROGRAMACIÓN'), ('alumnos1','20'),
+
+    ('periodo2','ENE-JUN 2024'), ('nivel2','LICENCIATURA'),
+    ('clave2','AEF1031'), ('materia2','FUNDAMENTOS DE BASES DE DATOS'), ('alumnos2','34'),
+
+    ('periodo3','ENE-JUN 2024'), ('nivel3','LICENCIATURA'),
+    ('clave3','SCD1011'), ('materia3','INGENIERÍA DE SOFTWARE'), ('alumnos3','30'),
+
+    ('periodo4','AGO-DIC 2024'), ('nivel4','LICENCIATURA'),
+    ('clave4','AEF1285'), ('materia4','FUNDAMENTOS DE PROGRAMACIÓN'), ('alumnos4','19'),
+
+    ('periodo5','AGO-DIC 2024'), ('nivel5','LICENCIATURA'),
+    ('clave5','AEF1031'), ('materia5','FUNDAMENTOS DE BASES DE DATOS'), ('alumnos5','39'),
+
+    ('periodo6','AGO-DIC 2024'), ('nivel6','LICENCIATURA'),
+    ('clave6','SCD1011'), ('materia6','INGENIERÍA DE SOFTWARE'), ('alumnos6','37'),
+
+    ('total','242')
+) AS v(nombre_campo, valor)
+ON c.id_tipo_doc = 11 AND c.nombre_campo = v.nombre_campo;
+
+
+-- Ajustar secuencia de valores_documento
+SELECT setval('valores_documento_id_valor_seq',
+              (SELECT MAX(id_valor) FROM valores_documento));

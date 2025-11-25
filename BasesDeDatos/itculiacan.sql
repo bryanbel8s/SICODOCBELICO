@@ -265,3 +265,8 @@ FROM personal p
 JOIN areas a ON a.id_area = p.id_area
 JOIN cargos c ON c.id_cargo = p.id_cargo
 LEFT JOIN recursos_humanos rh ON rh.id_personal = p.id_personal;
+
+-- PARA GUARDAR QR
+ALTER TABLE documentos_generados
+  ADD COLUMN qr_text TEXT;
+-- ================================
