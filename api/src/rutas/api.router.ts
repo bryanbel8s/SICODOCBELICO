@@ -2,37 +2,38 @@ import { Router } from "express";
 import { login } from "../controladores/auth.ctrl";
 import { getConvocatoriasActivas } from "../controladores/convocatoria.ctrl";
 import { crearExpediente, getMisExpedientes } from "../controladores/expediente.ctrl";
-import { crearDocumento, getMisDocumentos } from "../controladores/documento.ctrl";
+import { 
+    documentoExiste,
+    generarDocumento,
+    getPDF,
+    getMisDocumentos
+} from "../controladores/documento.ctrl";
 import { getRevisionesPendientes, actualizarRevision } from "../controladores/revision.ctrl";
 import { requireAuth, requireRoles } from "../middlewares/auth.middleware";
-import { generarDocumentoPython } from "../controladores/documentoPython.ctrl";
-import { getPDF } from "../controladores/documentoPDF.ctrl";
-
-
-
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.json({ msg: "SICODOC API funcionando 🔥" });
-});
+router.get("/", (req, res) => res.json({ msg: "SICODOC API funcionando 🔥" }));
 
 // Auth
 router.post("/auth/login", login);
 
-// Docente
+// Convocatorias
 router.get("/convocatorias/activas", requireAuth, getConvocatoriasActivas);
 
+// Expedientes
 router.get("/expedientes/mis", requireAuth, getMisExpedientes);
 router.post("/expedientes", requireAuth, crearExpediente);
 
+// Documentos
 router.get("/documentos/mis", requireAuth, getMisDocumentos);
-router.post("/documentos", requireAuth, crearDocumento);
+router.get("/documentos/existe", requireAuth, documentoExiste);
+router.post("/documentos/generar", requireAuth, generarDocumento);
 
-router.post("/documentos/generar", requireAuth, generarDocumentoPython);
-router.get("/documentos/pdf/:id", requireAuth, getPDF);
+// Nueva ruta correcta para PDF
+router.get("/documentos/pdf/:origen/:id", requireAuth, getPDF);
 
-// Directivos: Director / Subdirector / Jefe de Departamento
+// Directivos
 const ROLES_DIRECTIVOS = ["Director", "Subdirector", "Jefe de Departamento"];
 
 router.get(

@@ -1,18 +1,22 @@
-from flask import Flask, request, send_file
-import io
-from generar_documento import crear_pdf   # tu función real
+from flask import Flask, request, Response
+from edit import generar_pdf
+import os
 
 app = Flask(__name__)
 
 @app.post("/generar-documento")
-def generar():
+def generar_documento():
     data = request.json
-    tipo = data["tipo"]
-    rfc = data["rfc"]
+    id_documento = data["id_documento"]
 
-    # TU FUNCIÓN QUE GENERA EL PDF
-    pdf_bytes = crear_pdf(tipo, rfc)
+    plantilla = f"plantillas/{id_documento}.pdf"
+    salida = f"/tmp/{id_documento}.pdf"
 
-    return pdf_bytes
+    generar_pdf(id_documento, plantilla, salida)
+
+    with open(salida, "rb") as f:
+        pdf_bytes = f.read()
+
+    return Response(pdf_bytes, mimetype="application/pdf")
 
 app.run(port=5000)

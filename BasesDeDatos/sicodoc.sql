@@ -137,6 +137,11 @@ CREATE TABLE posiciones_pdf (
 );
 
 
+ALTER TABLE documento
+ADD COLUMN IF NOT EXISTS pdf BYTEA;
+
+ALTER TABLE documento
+ADD COLUMN IF NOT EXISTS estado VARCHAR(20) DEFAULT 'En captura';
 
 
 -- ==========================================
