@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,34 +11,36 @@
     <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
 </head>
 <style>
-        .document-icon {
-            font-size: 80px;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .empty-state {
-            margin: 40px 0;
-        }
+    .document-icon {
+        font-size: 80px;
+        color: #333;
+        margin-bottom: 30px;
+    }
 
-        .empty-state h2 {
-            font-size: 22px;
-            font-weight: 600;
-            color: #000;
-            margin-bottom: 30px;
-        }
+    .empty-state {
+        margin: 40px 0;
+    }
 
-        .error-note {
-            font-size: 14px;
-            color: #666;
-            margin-top: 60px;
-        }
+    .empty-state h2 {
+        font-size: 22px;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 30px;
+    }
 
-        .document-icon img {
-            width: 100px;
-            height: 100px;
-        }
+    .error-note {
+        font-size: 14px;
+        color: #666;
+        margin-top: 60px;
+    }
+
+    .document-icon img {
+        width: 100px;
+        height: 100px;
+    }
 </style>
-<body>  
+
+<body>
     <header class="main-header">
         <div class="container">
             <img src="assets/img/logo_sin_fondo.png" alt="Logo TecNM" class="logo">
@@ -50,9 +53,12 @@
             <h1 class="main-title">Mis Documentos para Estímulo</h1>
             <div class="empty-state">
                 <h2>SIN DOCUMENTOS</h2>
-                <div class="document-icon"><img src="/sicodoc-frontend/assets/img/circulo-de-documento-incorrecto.png"></div>
+                <div class="document-icon"><img src="/sicodoc-frontend/assets/img/circulo-de-documento-incorrecto.png">
+                </div>
                 <p class="message">
-                    Hola <strong>[Nombre del Docente]</strong>. Por el momento, no hemos detectado actividades (como asesorías, tutorías, etc.) que requieran una constancia. Tus documentos aparecerán en esta lista automáticamente en cuanto sean procesados por el sistema.
+                    Hola <strong>[Nombre del Docente]</strong>. Por el momento, no hemos detectado actividades (como
+                    asesorías, tutorías, etc.) que requieran una constancia. Tus documentos aparecerán en esta lista
+                    automáticamente en cuanto sean procesados por el sistema.
                 </p>
             </div>
             <p class="error-note">
@@ -65,12 +71,17 @@
             <img src="assets/img/logo_azul_sin_fondo.png" alt="Logo SICODOC" class="logo-foot">
             <div class="footer-info">
                 <p>© Copyright 2025 TecNM - Todos los Derechos Reservados</p>
-                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa</p>
+                <p>Secretaría Académica, de Investigación e Innovación / Dirección de Docencia e Innovación Educativa
+                </p>
                 <p>Plataforma SICODOC 1.0</p>
             </div>
             <img src="assets/img/logo_educacion_sin_fondo.png" alt="Gobierno del Estado" class="logo-foot">
         </div>
     </footer>
+    <script type="module" src="js/proteger.js"></script>
+    <script type="module" src="js/sin_docs.js"></script>
+
 </body>
 <img src="assets/img/barra_abajo.jpg" alt="Banda institucional" height="35px">
+
 </html>

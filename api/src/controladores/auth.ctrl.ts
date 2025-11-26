@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { pool } from "../db";
+import { sicodocDB } from "../db";
 import { crearToken } from "../servicios/jwt";
 
 export async function login(req: Request, res: Response) {
@@ -11,11 +11,8 @@ export async function login(req: Request, res: Response) {
     }
 
     try {
-        // ============================
-        // CONSULTA EN POSTGRESQL
-        // ============================
-        const query = `
-            SELECT 
+        const result = await sicodocDB.query(
+            `SELECT 
                 u.rfc,
                 u.nombre,
                 u.apellido,
@@ -25,55 +22,39 @@ export async function login(req: Request, res: Response) {
                 r.nombrerol
             FROM usuario u
             JOIN rol r ON r.idrol = u.idrol
-            WHERE u.correo = $1
-            LIMIT 1
-        `;
+            WHERE u.correo = $1`,
+            [correo]
+        );
 
-        const result = await pool.query(query, [correo]);
-
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({ error: "Correo no encontrado" });
         }
 
         const user = result.rows[0];
 
-        // ============================
-        // VALIDACIÓN DE CONTRASEÑA
-        // ============================
-        const storedHash = user.contrasena_hash;
-
-        const valid = await bcrypt.compare(password, storedHash);
-
-        if (!valid) {
+        const passwordOk = await bcrypt.compare(password, user.contrasena_hash);
+        if (!passwordOk) {
             return res.status(401).json({ error: "Contraseña incorrecta" });
         }
 
-        // ============================
-        // CREACIÓN DEL TOKEN
-        // ============================
-        const token = crearToken({
+        const payload = {
             rfc: user.rfc,
             nombre: user.nombre,
             apellido: user.apellido,
             correo: user.correo,
             idrol: user.idrol,
-            rol: user.nombrerol
-        });
+            rol: user.nombrerol  // 'Docente', 'Director', etc.
+        };
+
+        const token = crearToken(payload);
 
         return res.json({
-            message: "Login exitoso",
+            ok: true,
             token,
-            usuario: {
-                rfc: user.rfc,
-                nombre: user.nombre,
-                apellido: user.apellido,
-                correo: user.correo,
-                rol: user.nombrerol,
-                idrol: user.idrol
-            }
+            usuario: payload
         });
 
-    } catch (error: any) {
+    } catch (error) {
         console.error("Error login:", error);
         return res.status(500).json({ error: "Error interno del servidor" });
     }

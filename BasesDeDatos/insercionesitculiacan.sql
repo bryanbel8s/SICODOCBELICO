@@ -1088,3 +1088,18 @@ ON c.id_tipo_doc = 11 AND c.nombre_campo = v.nombre_campo;
 -- Ajustar secuencia de valores_documento
 SELECT setval('valores_documento_id_valor_seq',
               (SELECT MAX(id_valor) FROM valores_documento));
+
+-- qr
+INSERT INTO campos_documento (id_tipo_doc, nombre_campo, tipo_dato, obligatorio)
+VALUES
+  (1, 'qr_firma', 'Imagen', FALSE),
+  (2, 'qr_firma', 'Imagen', FALSE),
+  (3, 'qr_firma', 'Imagen', FALSE),
+  (4, 'qr_firma', 'Imagen', FALSE),
+  (5, 'qr_firma', 'Imagen', FALSE),
+  (6, 'qr_firma', 'Imagen', FALSE),
+  (7, 'qr_firma', 'Imagen', FALSE),
+  (8, 'qr_firma', 'Imagen', FALSE),
+  (9, 'qr_firma', 'Imagen', FALSE),
+  (10, 'qr_firma', 'Imagen', FALSE),
+  (11, 'qr_firma', 'Imagen', FALSE);
