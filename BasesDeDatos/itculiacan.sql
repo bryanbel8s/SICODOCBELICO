@@ -187,6 +187,47 @@ CREATE TABLE firmas_documento (
   FOREIGN KEY (id_firma) REFERENCES personal(id_personal)
 );
 
+-- NUEVAS TABLAS PARA VALIDACIONES
+CREATE TABLE tutorias (
+  id SERIAL PRIMARY KEY,
+  id_docente INT NOT NULL,
+  num_tutorados INT NOT NULL,
+  periodo VARCHAR(20) NOT NULL,
+  FOREIGN KEY (id_docente) REFERENCES personal(id_personal)
+);
+
+CREATE TABLE actividades_complementarias (
+  id SERIAL PRIMARY KEY,
+  id_docente INT NOT NULL,
+  semestre VARCHAR(20),
+  dictamen VARCHAR(50),
+  fecha DATE,
+  FOREIGN KEY (id_docente) REFERENCES personal(id_personal)
+);
+
+CREATE TABLE aulas (
+  id_aula SERIAL PRIMARY KEY,
+  clave VARCHAR(20)
+);
+
+ALTER TABLE grupos ADD COLUMN id_aula INT;
+ALTER TABLE grupos ADD FOREIGN KEY (id_aula) REFERENCES aulas(id_aula);
+
+CREATE TABLE sinodales (
+  id SERIAL PRIMARY KEY,
+  id_docente INT NOT NULL,
+  nombre_alumno VARCHAR(120),
+  numero_control VARCHAR(18),
+  carrera VARCHAR(200),
+  fecha DATE,
+  FOREIGN KEY (id_docente) REFERENCES personal(id_personal)
+);
+
+ALTER TABLE carreras ADD COLUMN acreditada BOOLEAN DEFAULT TRUE;
+
+ALTER TABLE documentos_generados ADD COLUMN anio_convocatoria INT;
+
+
 -- AREAS
 CREATE INDEX ix_areas_nombre ON areas(nombre);
 CREATE INDEX ix_areas_superior ON areas(id_superior);

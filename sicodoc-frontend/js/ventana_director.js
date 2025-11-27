@@ -1,5 +1,5 @@
 import { API_URL } from "./config.js";
-import { obtenerToken } from "./auth.js";
+import { obtenerToken, cerrarSesion } from "./auth.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const token = obtenerToken();
@@ -27,8 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         </a>`;
     });
 
-    document.getElementById("back-button").onclick = () => {
-        localStorage.clear();
-        window.location.href = "login.html";
-    };
+
+    document.getElementById("back-button").onclick = cerrarSesion;
+
 });

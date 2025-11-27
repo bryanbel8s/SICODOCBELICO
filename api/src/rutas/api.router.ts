@@ -1,53 +1,87 @@
 import { Router } from "express";
 import { login } from "../controladores/auth.ctrl";
-import { getConvocatoriasActivas } from "../controladores/convocatoria.ctrl";
-import { crearExpediente, getMisExpedientes } from "../controladores/expediente.ctrl";
-import { 
-    documentoExiste,
-    generarDocumento,
-    getPDF,
-    getMisDocumentos
+import {
+  getPDF,
+  limpiarPdfsDocente,
 } from "../controladores/documento.ctrl";
-import { getRevisionesPendientes, actualizarRevision } from "../controladores/revision.ctrl";
+import {
+  getDashboardDocente,
+  generarPdfDocente,
+} from "../controladores/docente.ctrl";
+import {
+  getRevisionesPendientes,
+  getDetalleRevision,
+  decidirRevision,
+} from "../controladores/revision.ctrl";
 import { requireAuth, requireRoles } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-router.get("/", (req, res) => res.json({ msg: "SICODOC API funcionando 🔥" }));
+router.get("/", (_req, res) =>
+  res.json({ msg: "SICODOC API funcionando 🔥" })
+);
 
-// Auth
+// =============
+// AUTH
+// =============
 router.post("/auth/login", login);
 
-// Convocatorias
-router.get("/convocatorias/activas", requireAuth, getConvocatoriasActivas);
-
-// Expedientes
-router.get("/expedientes/mis", requireAuth, getMisExpedientes);
-router.post("/expedientes", requireAuth, crearExpediente);
-
-// Documentos
-router.get("/documentos/mis", requireAuth, getMisDocumentos);
-router.get("/documentos/existe", requireAuth, documentoExiste);
-router.post("/documentos/generar", requireAuth, generarDocumento);
-
-// Nueva ruta correcta para PDF
-router.get("/documentos/pdf/:origen/:id", requireAuth, getPDF);
-
-// Directivos
-const ROLES_DIRECTIVOS = ["Director", "Subdirector", "Jefe de Departamento"];
-
+// =============
+// DOCENTE
+// =============
 router.get(
-  "/revisiones/pendientes",
+  "/docente/dashboard",
   requireAuth,
-  requireRoles(...ROLES_DIRECTIVOS),
-  getRevisionesPendientes
+  requireRoles("Docente"),
+  getDashboardDocente
 );
 
 router.post(
-  "/revisiones/:idrevision",
+  "/docente/documentos/:id/generar",
   requireAuth,
-  requireRoles(...ROLES_DIRECTIVOS),
-  actualizarRevision
+  requireRoles("Docente"),
+  generarPdfDocente
+);
+
+// Borrar PDFs temporales al cerrar sesión
+router.post(
+  "/docente/limpiar-pdfs",
+  requireAuth,
+  requireRoles("Docente"),
+  limpiarPdfsDocente
+);
+
+// =============
+// DIRECTOR (REVISIÓN)
+// =============
+router.get(
+  "/revisiones/pendientes",
+  requireAuth,
+  requireRoles("Director"),
+  getRevisionesPendientes
+);
+
+router.get(
+  "/revisiones/detalle/:id",
+  requireAuth,
+  requireRoles("Director"),
+  getDetalleRevision
+);
+
+router.post(
+  "/revisiones/:id",
+  requireAuth,
+  requireRoles("Director"),
+  decidirRevision
+);
+
+// =============
+// PDF
+// =============
+router.get(
+  "/documentos/pdf/:origen/:id",
+  requireAuth,
+  getPDF
 );
 
 export default router;

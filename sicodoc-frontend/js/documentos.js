@@ -1,73 +1,65 @@
-import { API_URL } from "./config.js";
-import { obtenerToken, obtenerUsuario } from "./auth.js";
+// sicodoc-frontend/js/documentos.js
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const token = obtenerToken();
-    const usuario = obtenerUsuario();
-    if (!token || !usuario) {
-        window.location.href = "login.html";
-        return;
+const API_BASE = "/api";
+
+async function cargarDashboardDocente() {
+  const resp = await fetch(`${API_BASE}/docente/dashboard`, {
+    credentials: "include"
+  });
+  const data = await resp.json();
+
+  // data.convocatoria
+  // data.idexpediente
+  // data.documentos = [{ id_doc_sicodoc, nombre_doc, estado_itc, archivo_final, qr_text }]
+
+  const tabla = document.getElementById("tabla-documentos");
+  tabla.innerHTML = "";
+
+  data.documentos.forEach(doc => {
+    const tr = document.createElement("tr");
+
+    const tdNombre = document.createElement("td");
+    tdNombre.textContent = doc.nombre_doc;
+
+    const tdEstado = document.createElement("td");
+    tdEstado.textContent = doc.estado_itc || "En proceso";
+
+    const tdAcciones = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.textContent = "Generar PDF";
+    btn.onclick = () => generarPdf(doc.id_doc_sicodoc);
+
+    tdAcciones.appendChild(btn);
+
+    tr.appendChild(tdNombre);
+    tr.appendChild(tdEstado);
+    tr.appendChild(tdAcciones);
+
+    tabla.appendChild(tr);
+  });
+}
+
+async function generarPdf(idDocSicodoc) {
+  try {
+    const resp = await fetch(`${API_BASE}/docente/documentos/${idDocSicodoc}/generar`, {
+      method: "POST",
+      credentials: "include"
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok || !data.ok) {
+      alert(data.error || "No se pudo generar el PDF");
+      return;
     }
 
-    const params = new URLSearchParams(window.location.search);
-    const idexpediente = params.get("exp");
+    // Abrir PDF en nueva pestaña
+    window.open(data.ruta_pdf, "_blank");
+  } catch (err) {
+    console.error(err);
+    alert("Error al generar PDF");
+  }
+}
 
-    const select = document.getElementById("selectTipo");
-    const btnGenerar = document.getElementById("btnGenerarDoc");
-    const tabla = document.getElementById("tablaDocumentos");
-
-    // Cargar documentos existentes del expediente
-    async function cargarDocumentos() {
-        const res = await fetch(`${API_URL}/documentos/mis`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        const docs = await res.json();
-        tabla.innerHTML = "";
-
-        docs
-          .filter(d => d.idexpediente == idexpediente)
-          .forEach(d => {
-            tabla.innerHTML += `
-              <tr>
-                  <td>${d.tipo}</td>
-                  <td>${d.estado || "En captura"}</td>
-                  <td>${d.fechageneracion || ""}</td>
-              </tr>
-            `;
-          });
-    }
-
-    if (btnGenerar) {
-        btnGenerar.addEventListener("click", async () => {
-            const tipo = select.value;
-
-            const res = await fetch(`${API_URL}/documentos/generar`, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    tipo,
-                    idexpediente,
-                    rfc: usuario.rfc
-                })
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                alert(data.error || "Error al generar documento");
-                return;
-            }
-
-            alert("Documento generado correctamente");
-            cargarDocumentos();
-        });
-    }
-
-    cargarDocumentos();
-});
+// Llamar al cargar la página
+document.addEventListener("DOMContentLoaded", cargarDashboardDocente);

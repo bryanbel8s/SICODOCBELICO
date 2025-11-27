@@ -1,11 +1,15 @@
 import jwt from "jsonwebtoken";
 
-const SECRET = "SICODOC_SUPER_SECRETO_2025";
+const JWT_SECRET = process.env.JWT_SECRET || "SICODOC_SUPER_SECRET_2025";
 
-export function crearToken(payload: any) {
-    return jwt.sign(payload, SECRET, { expiresIn: "4h" });
-}
+export function crearToken(usuario) {
+    const payload = {
+        rfc: usuario.rfc,
+        nombre: usuario.nombre,
+        apellido: usuario.apellido,
+        rol: usuario.rol,
+        idrol: usuario.idrol
+    };
 
-export function verificarToken(token: string) {
-    return jwt.verify(token, SECRET);
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: "8h" });
 }

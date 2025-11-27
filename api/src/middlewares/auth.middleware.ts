@@ -3,37 +3,48 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "SICODOC_SUPER_SECRET_2025";
 
+interface UsuarioJWT {
+  rfc: string;
+  nombre: string;
+  apellido: string;
+  rol: string;
+  idrol: number;
+}
+
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-    const header = req.headers.authorization;
+  const header = req.headers.authorization;
 
-    if (!header)
-        return res.status(401).json({ error: "Token requerido" });
+  if (!header) {
+    return res.status(401).json({ error: "Token requerido" });
+  }
 
-    const token = header.split(" ")[1];
+  const token = header.split(" ")[1];
 
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET) as any;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as UsuarioJWT;
 
-        // ESTO HACE QUE req.user SE VEA EN TODAS PARTES
-        (req as any).user = decoded;
+    (req as any).usuario = decoded;
+    (req as any).user = decoded; // compatibilidad con código viejo
 
-        next();
-    } catch (err) {
-        return res.status(401).json({ error: "Token inválido" });
-    }
+    next();
+  } catch (error) {
+    console.error("Error verificando JWT:", error);
+    return res.status(401).json({ error: "Token inválido o expirado" });
+  }
 }
 
 export function requireRoles(...rolesPermitidos: string[]) {
-    return (req: Request, res: Response, next: NextFunction) => {
-        if (!(req as any).user) {
-            return res.status(401).json({ error: "No autenticado" });
-        }
+  return (req: Request, res: Response, next: NextFunction) => {
+    const usuario = (req as any).usuario as UsuarioJWT | undefined;
 
-        if (!rolesPermitidos.includes((req as any).user.rol
-        )) {
-            return res.status(403).json({ error: "Permiso denegado" });
-        }
+    if (!usuario) {
+      return res.status(401).json({ error: "No autenticado" });
+    }
 
-        next();
-    };
+    if (!rolesPermitidos.includes(usuario.rol)) {
+      return res.status(403).json({ error: "Permiso denegado" });
+    }
+
+    next();
+  };
 }

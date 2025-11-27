@@ -2,18 +2,20 @@ import { Pool } from "pg";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Función segura para obtener host (fix ENOTFOUND)
-function safeHost(envValue: string | undefined, fallback: string) {
-  if (!envValue || envValue.trim() === "" || envValue.includes("-db")) {
-    return fallback; // localhost si no existe host real
-  }
-  return envValue;
-}
+console.log("🛠 Configuración cargada:");
+console.log({
+  PG1_HOST: process.env.PG1_HOST,
+  PG1_PORT: process.env.PG1_PORT,
+  PG1_DB: process.env.PG1_DB,
+  PG2_HOST: process.env.PG2_HOST,
+  PG2_PORT: process.env.PG2_PORT,
+  PG2_DB: process.env.PG2_DB,
+});
 
 // Conexión SICODOC
 export const sicodocDB = new Pool({
-  host: safeHost(process.env.PG1_HOST, "localhost"),
-  port: Number(process.env.PG1_PORT) || 5432,
+  host: process.env.PG1_HOST,
+  port: Number(process.env.PG1_PORT),
   user: process.env.PG1_USER,
   password: process.env.PG1_PASS,
   database: process.env.PG1_DB,
@@ -21,27 +23,19 @@ export const sicodocDB = new Pool({
 
 // Conexión ITC
 export const itcDB = new Pool({
-  host: safeHost(process.env.PG2_HOST, "localhost"),
-  port: Number(process.env.PG2_PORT) || 5432,
+  host: process.env.PG2_HOST,
+  port: Number(process.env.PG2_PORT),
   user: process.env.PG2_USER,
   password: process.env.PG2_PASS,
   database: process.env.PG2_DB,
 });
 
-// Test SICODOC
+// ---- TEST CONEXIONES ----
+
 sicodocDB.connect()
   .then(() => console.log("🔥 BD SICODOC conectada"))
-  .catch(err => {
-    console.error("❌ Error SICODOC:");
-    console.error("Host:", safeHost(process.env.PG1_HOST, "localhost"));
-    console.error(err.message);
-  });
+  .catch(err => console.error("❌ Error SICODOC:", err.message));
 
-// Test ITC
 itcDB.connect()
   .then(() => console.log("🔥 BD ITC conectada"))
-  .catch(err => {
-    console.error("❌ Error ITC:");
-    console.error("Host:", safeHost(process.env.PG2_HOST, "localhost"));
-    console.error(err.message);
-  });
+  .catch(err => console.error("❌ Error ITC:", err.message));

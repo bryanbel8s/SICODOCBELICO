@@ -1,22 +1,23 @@
-from flask import Flask, request, Response
-from edit import generar_pdf
-import os
+# api/generadocs/python_server.py
+from flask import Flask, request, jsonify
+from edit import generar_pdf  # nuestra función
 
 app = Flask(__name__)
 
-@app.post("/generar-documento")
-def generar_documento():
-    data = request.json
-    id_documento = data["id_documento"]
+@app.route("/generar-pdf", methods=["POST"])
+def generar_pdf_route():
+    try:
+        data = request.get_json()
+        id_doc_sicodoc = int(data.get("id_doc_sicodoc"))
 
-    plantilla = f"plantillas/{id_documento}.pdf"
-    salida = f"/tmp/{id_documento}.pdf"
+        ruta_pdf = generar_pdf(id_doc_sicodoc)
 
-    generar_pdf(id_documento, plantilla, salida)
+        return jsonify({"ok": True, "ruta_pdf": ruta_pdf})
+    except Exception as e:
+        print("Error en generar-pdf:", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
 
-    with open(salida, "rb") as f:
-        pdf_bytes = f.read()
 
-    return Response(pdf_bytes, mimetype="application/pdf")
-
-app.run(port=5000)
+if __name__ == "__main__":
+    # Puedes ajustar host y puerto según tu docker / entorno
+    app.run(host="0.0.0.0", port=5001)

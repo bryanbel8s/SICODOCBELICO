@@ -30,16 +30,19 @@ CREATE SCHEMA IF NOT EXISTS itculiacan_fdw;
 -- 5. Importar las tablas necesarias desde itculiacan
 IMPORT FOREIGN SCHEMA public
 LIMIT TO (
-  personal,
-  recursos_humanos,
-  categorias_edd,
-  tipos_documento,
-  campos_documento,
-  documentos_generados,
-  valores_documento
+  tutorias,
+  actividades_complementarias,
+  aulas,
+  sinodales,
+  carreras,
+  materias,
+  grupos,
+  estudiantes,
+  calificaciones
 )
 FROM SERVER itculiacan_server
 INTO itculiacan_fdw;
+
 
 
 -- ==========================================
@@ -352,3 +355,372 @@ BEFORE INSERT OR UPDATE ON posiciones_pdf
 FOR EACH ROW
 EXECUTE FUNCTION validar_posiciones_pdf();
 
+-- En BD sicodoc
+CREATE OR REPLACE FUNCTION f_anio_evidencias(p_idexpediente INT)
+RETURNS INT AS $$
+DECLARE
+    v_anio INT;
+BEGIN
+    SELECT EXTRACT(YEAR FROM c.fecha_pub)::INT
+    INTO v_anio
+    FROM expediente e
+    JOIN convocatoria c ON c.idconvocatoria = e.idconvocatoria
+    WHERE e.idexpediente = p_idexpediente;
+
+    RETURN v_anio;
+END;
+$$ LANGUAGE plpgsql;
+
+-- En BD sicodoc, usando FDW para insertar en itculiacan
+CREATE OR REPLACE FUNCTION f_crear_doc_itc_desde_sicodoc(p_iddocumento INT)
+RETURNS INT AS $$
+DECLARE
+    v_tipo_sico    TEXT;
+    v_rfc          VARCHAR(13);
+    v_idexpediente INT;
+    v_idconvocatoria INT;
+    v_anio_evid INT;
+    v_id_personal_itc INT;
+    v_id_tipo_doc INT;
+    v_id_doc_itc INT;
+BEGIN
+    -- Obtenemos datos del documento en SICODOC
+    SELECT d.tipo, d.rfc_usuario, d.idexpediente, e.idconvocatoria
+    INTO   v_tipo_sico, v_rfc, v_idexpediente, v_idconvocatoria
+    FROM documento d
+    JOIN expediente e ON e.idexpediente = d.idexpediente
+    WHERE d.iddocumento = p_iddocumento;
+
+    -- Año de evidencias
+    v_anio_evid := f_anio_evidencias(v_idexpediente);
+
+    -- Obtenemos el id_personal de ITC a partir del RFC de SPD
+    SELECT di.id_personal
+    INTO v_id_personal_itc
+    FROM v_spd_docentes_itc di
+    WHERE di.rfc_spd = v_rfc;
+
+    -- Obtenemos el tipo de documento en ITC por el nombre
+    SELECT td.id_tipo_doc
+    INTO v_id_tipo_doc
+    FROM itculiacan_fdw.tipos_documento td
+    WHERE td.nombre_doc = v_tipo_sico;
+
+    -- Creamos registro en itculiacan.documentos_generados
+    INSERT INTO itculiacan_fdw.documentos_generados(
+        id_tipo_doc, id_docente, fecha_creacion, estado, anio_convocatoria
+    ) VALUES (
+        v_id_tipo_doc, v_id_personal_itc, NOW()::DATE, 'En proceso', v_anio_evid
+    )
+    RETURNING id_documento INTO v_id_doc_itc;
+
+    RETURN v_id_doc_itc;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION f_llenar_constancia_laboral(p_id_doc_itc INT)
+RETURNS VOID AS $$
+DECLARE
+    v_id_docente INT;
+    v_id_tipo_doc INT;
+    v_id_personal INT;
+    v_anio INT;
+BEGIN
+    SELECT id_docente, id_tipo_doc, anio_convocatoria
+    INTO v_id_docente, v_id_tipo_doc, v_anio
+    FROM itculiacan_fdw.documentos_generados
+    WHERE id_documento = p_id_doc_itc;
+
+    v_id_personal := v_id_docente;
+
+    -- Obtenemos datos laborales
+    INSERT INTO itculiacan_fdw.valores_documento(id_documento, id_campo, valor)
+    SELECT
+        p_id_doc_itc,
+        c.id_campo,
+        CASE c.nombre_campo
+            WHEN 'nombre' THEN vda.nombres || ' ' || vda.apellidopat || ' ' || COALESCE(vda.apellidomat, '')
+            WHEN 'filiacion' THEN vda.area
+            WHEN 'fecha_inicio' THEN COALESCE(vda.fecha_ingreso::TEXT, '')
+            WHEN 'fecha_dos' THEN v_anio::TEXT
+            WHEN 'categoria_anterior' THEN COALESCE(vda.cargo, '')
+            WHEN 'horas' THEN COALESCE(vda.por_horas::TEXT, '')
+            WHEN 'estatus_completo' THEN vda.tipo_contrato || ' ' || vda.estatus
+            WHEN 'categoria_actual' THEN COALESCE(vda.cargo, '')
+            WHEN 'clave_presupuestal' THEN COALESCE(vda.rfc, '')
+            WHEN 'fecha_efectos' THEN COALESCE(vda.fecha_ingreso::TEXT, '')
+            WHEN 'estatus_actual' THEN vda.estatus
+            ELSE ''
+        END AS valor
+    FROM itculiacan_fdw.campos_documento c
+    CROSS JOIN v_datos_laborales_actual vda
+    WHERE c.id_tipo_doc = v_id_tipo_doc
+      AND vda.id_personal = v_id_personal
+      AND c.nombre_campo IN (
+        'nombre','filiacion','fecha_inicio','fecha_dos','categoria_anterior',
+        'horas','estatus_completo','categoria_actual','clave_presupuestal',
+        'fecha_efectos','estatus_actual'
+      );
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION f_llenar_constancia_tutorias(p_id_doc_itc INT)
+RETURNS VOID AS $$
+DECLARE
+    v_id_docente INT;
+    v_id_tipo_doc INT;
+    v_anio INT;
+    v_nombre_docente TEXT;
+    v_depto TEXT;
+    v_fecha1 DATE;
+    v_fecha2 DATE;
+    v_total INT;
+BEGIN
+    SELECT dg.id_docente, dg.id_tipo_doc, dg.anio_convocatoria
+    INTO v_id_docente, v_id_tipo_doc, v_anio
+    FROM itculiacan_fdw.documentos_generados dg
+    WHERE dg.id_documento = p_id_doc_itc;
+
+    -- Nombre y depto desde v_datos_laborales_actual
+    SELECT 
+        vda.nombres || ' ' || vda.apellidopat || ' ' || COALESCE(vda.apellidomat, ''),
+        vda.area
+    INTO v_nombre_docente, v_depto
+    FROM v_datos_laborales_actual vda
+    WHERE vda.id_personal = v_id_docente;
+
+    -- Fechas y total desde tutorias (ejemplo sencillo)
+    SELECT MIN(fecha) FILTER (WHERE periodo LIKE 'ENE-JUN%'),
+           MAX(fecha) FILTER (WHERE periodo LIKE 'ENE-JUN%'),
+           COALESCE(SUM(num_tutorados),0)
+    INTO v_fecha1, v_fecha2, v_total
+    FROM tutorias
+    WHERE id_docente = v_id_docente
+      AND periodo LIKE ('%' || v_anio::TEXT);
+
+    -- Insertamos valores
+    INSERT INTO itculiacan_fdw.valores_documento(id_documento, id_campo, valor)
+    SELECT
+        p_id_doc_itc,
+        c.id_campo,
+        CASE c.nombre_campo
+            WHEN 'nombre' THEN v_nombre_docente
+            WHEN 'depto' THEN v_depto
+            WHEN 'fecha1' THEN COALESCE(v_fecha1::TEXT,'')
+            WHEN 'fecha2' THEN COALESCE(v_fecha2::TEXT,'')
+            WHEN 'tutoria' THEN 'Tutorías académicas'
+            WHEN 'tutoria2' THEN 'Tutorías académicas'
+            WHEN 'total' THEN v_total::TEXT
+            WHEN 'carrera1' THEN 'Ingeniería en Sistemas Computacionales'
+            WHEN 'carrera2' THEN 'Ingeniería en Sistemas Computacionales'
+            ELSE ''
+        END
+    FROM itculiacan_fdw.campos_documento c
+    WHERE c.id_tipo_doc = v_id_tipo_doc
+      AND c.nombre_campo IN ('nombre','depto','fecha1','fecha2',
+                             'tutoria','tutoria2','total',
+                             'carrera1','carrera2');
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION f_llenar_carga_academica(p_id_doc_itc INT)
+RETURNS VOID AS $$
+DECLARE
+    v_id_docente INT;
+    v_id_tipo_doc INT;
+    v_anio INT;
+    v_nombre_docente TEXT;
+    v_expediente TEXT := 'SPD-' || p_id_doc_itc::TEXT;
+BEGIN
+    SELECT dg.id_docente, dg.id_tipo_doc, dg.anio_convocatoria
+    INTO v_id_docente, v_id_tipo_doc, v_anio
+    FROM itculiacan_fdw.documentos_generados dg
+    WHERE dg.id_documento = p_id_doc_itc;
+
+    SELECT vda.nombres || ' ' || vda.apellidopat || ' ' || COALESCE(vda.apellidomat,'')
+    INTO v_nombre_docente
+    FROM v_datos_laborales_actual vda
+    WHERE vda.id_personal = v_id_docente;
+
+    -- Nombre y expediente
+    INSERT INTO itculiacan_fdw.valores_documento(id_documento, id_campo, valor)
+    SELECT p_id_doc_itc, c.id_campo,
+           CASE c.nombre_campo
+                WHEN 'nombre' THEN v_nombre_docente
+                WHEN 'expediente' THEN v_expediente
+                ELSE ''
+           END
+    FROM itculiacan_fdw.campos_documento c
+    WHERE c.id_tipo_doc = v_id_tipo_doc
+      AND c.nombre_campo IN ('nombre','expediente');
+
+    -- Ahora llenamos filas de enero-junio / agosto-diciembre
+    -- Esta es una idea básica: toma hasta 6 grupos por año
+    WITH grupos_doc AS (
+        SELECT g.*, m.nombre AS materia, c.nombre AS carrera_name,
+               ROW_NUMBER() OVER (
+                   PARTITION BY (CASE 
+                                    WHEN g.periodo ILIKE 'ENE-JUN%' THEN 1 
+                                    WHEN g.periodo ILIKE 'AGO-DIC%' THEN 2 
+                                END)
+                   ORDER BY g.clave_grupo
+               ) AS rn,
+               CASE 
+                    WHEN g.periodo ILIKE 'ENE-JUN%' THEN 1
+                    WHEN g.periodo ILIKE 'AGO-DIC%' THEN 4
+               END AS bloque_inicio
+        FROM grupos g
+        JOIN materias m ON m.id_materia = g.id_materia
+        JOIN carreras c ON c.id_carrera = m.id_carrera
+        WHERE g.id_docente = v_id_docente
+          AND g.periodo LIKE '%' || v_anio::TEXT
+    ), filas AS (
+        SELECT 
+            (bloque_inicio + rn - 1) AS fila,
+            g.*
+        FROM grupos_doc g
+        WHERE rn <= 3 -- máximo 3 por bloque (1-3 ene-jun, 4-6 ago-dic)
+    )
+    INSERT INTO itculiacan_fdw.valores_documento(id_documento, id_campo, valor)
+    SELECT
+        p_id_doc_itc,
+        c.id_campo,
+        CASE c.nombre_campo
+            WHEN 'periodo' || fila::TEXT THEN g.periodo
+            WHEN 'nivel'   || fila::TEXT THEN 'Licenciatura'
+            WHEN 'clave'   || fila::TEXT THEN m.clave
+            WHEN 'materia' || fila::TEXT THEN m.nombre
+            WHEN 'alumnos' || fila::TEXT THEN COUNT(cal.numerocontrol)::TEXT
+            ELSE ''
+        END
+    FROM filas g
+    JOIN materias m ON m.id_materia = g.id_materia
+    LEFT JOIN calificaciones cal ON cal.id_grupo = g.id_grupo
+    JOIN itculiacan_fdw.campos_documento c
+      ON c.id_tipo_doc = v_id_tipo_doc
+     AND c.nombre_campo IN (
+        'periodo1','nivel1','clave1','materia1','alumnos1',
+        'periodo2','nivel2','clave2','materia2','alumnos2',
+        'periodo3','nivel3','clave3','materia3','alumnos3',
+        'periodo4','nivel4','clave4','materia4','alumnos4',
+        'periodo5','nivel5','clave5','materia5','alumnos5',
+        'periodo6','nivel6','clave6','materia6','alumnos6'
+     )
+    GROUP BY p_id_doc_itc, c.id_campo, c.nombre_campo, g.fila, g.periodo, m.clave, m.nombre;
+
+    -- Total alumnos
+    INSERT INTO itculiacan_fdw.valores_documento(id_documento, id_campo, valor)
+    SELECT p_id_doc_itc, c.id_campo, COUNT(cal.numerocontrol)::TEXT
+    FROM itculiacan_fdw.campos_documento c
+    LEFT JOIN grupos g ON g.id_docente = v_id_docente
+    LEFT JOIN calificaciones cal ON cal.id_grupo = g.id_grupo
+    WHERE c.id_tipo_doc = v_id_tipo_doc
+      AND c.nombre_campo = 'total'
+    GROUP BY c.id_campo;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION f_preparar_documento_itc(p_iddocumento_sico INT)
+RETURNS INT AS $$
+DECLARE
+    v_id_doc_itc INT;
+    v_tipo TEXT;
+    v_id_tipo_doc INT;
+BEGIN
+    -- Crear o recuperar doc en itculiacan
+    v_id_doc_itc := f_crear_doc_itc_desde_sicodoc(p_iddocumento_sico);
+
+    SELECT tipo INTO v_tipo FROM documento WHERE iddocumento = p_iddocumento_sico;
+
+    SELECT id_tipo_doc INTO v_id_tipo_doc
+    FROM itculiacan_fdw.tipos_documento
+    WHERE nombre_doc = v_tipo;
+
+    -- Llenar según el tipo
+    IF v_id_tipo_doc = 1 THEN
+        PERFORM f_llenar_constancia_laboral(v_id_doc_itc);
+    ELSIF v_id_tipo_doc = 2 THEN
+        PERFORM f_llenar_constancia_tutorias(v_id_doc_itc);
+    ELSIF v_id_tipo_doc = 11 THEN
+        PERFORM f_llenar_carga_academica(v_id_doc_itc);
+    -- aquí agregas los demás tipos (3,4,5,6,7,8,9,10) con sus funciones
+    END IF;
+
+    RETURN v_id_doc_itc;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION obtener_o_crear_expediente(
+    p_rfc_usuario VARCHAR(13),
+    p_nombre_convocatoria VARCHAR
+)
+RETURNS INT AS $$
+DECLARE
+    v_idconv INT;
+    v_idexpediente INT;
+BEGIN
+    SELECT idconvocatoria
+    INTO v_idconv
+    FROM convocatoria
+    WHERE nombre = p_nombre_convocatoria
+    ORDER BY idconvocatoria DESC
+    LIMIT 1;
+
+    IF v_idconv IS NULL THEN
+        RAISE EXCEPTION 'No existe la convocatoria %', p_nombre_convocatoria;
+    END IF;
+
+    SELECT idexpediente
+    INTO v_idexpediente
+    FROM expediente
+    WHERE rfc_usuario = p_rfc_usuario
+      AND idconvocatoria = v_idconv
+    LIMIT 1;
+
+    IF v_idexpediente IS NULL THEN
+        INSERT INTO expediente (estado, rfc_usuario, idconvocatoria)
+        VALUES ('En captura', p_rfc_usuario, v_idconv)
+        RETURNING idexpediente INTO v_idexpediente;
+    END IF;
+
+    RETURN v_idexpediente;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE VIEW v_spd_documentos_por_docente AS
+SELECT
+  vsi.id_doc_sicodoc,
+  vsi.id_doc_itc,
+  vsi.rfc_docente_spd AS rfc_docente,
+  vsi.docente_spd     AS nombre_docente,
+  vsi.id_tipo_doc,
+  vsi.nombre_doc,
+  vsi.plantilla_archivo,
+  vsi.estado_itc,
+  vsi.archivo_final,
+  vsi.qr_text
+FROM v_spd_documentos_itc vsi;
+
+
+ALTER TABLE documento
+ADD COLUMN id_documento_itc INT;
+
+UPDATE documento d
+SET id_documento_itc = dg.id_documento
+FROM expediente e,
+     usuario u,
+     itculiacan_fdw.recursos_humanos rh,
+     itculiacan_fdw.documentos_generados dg,
+     itculiacan_fdw.tipos_documento td
+WHERE d.id_documento_itc IS NULL
+  AND e.idexpediente = d.idexpediente
+  AND u.rfc = d.rfc_usuario
+  AND rh.rfc = u.rfc
+  AND dg.id_docente = rh.id_personal
+  AND td.id_tipo_doc = dg.id_tipo_doc
+  AND td.nombre_doc = d.tipo;
+
+
+ALTER TABLE documento
+    ADD COLUMN pdf_path TEXT,
+    DROP COLUMN pdf;
